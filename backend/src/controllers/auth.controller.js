@@ -17,6 +17,9 @@ export async function loginUsuario(req, res, next) {
         err.message === 'Usuario inactivo. Contacte al administrador.') {
       err.status = 401;
     }
+    if (err.message === 'No se pudo conectar con el servidor') {
+      err.status = 503;
+    }
     next(err);
   }
 }

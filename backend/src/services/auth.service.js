@@ -3,7 +3,12 @@ import { generarToken } from '../utils/jwt.util.js';
 import { findByCorreo, isActive, verificarUnidadTieneResidenteActivo, crearUsuario, findById, desactivarUsuario, obtenerResidentes, 
   obtenerResidenteConUnidad, actualizarRol } from '../repositories/usuarios.repository.js';
 export async function login(correo, password) {
-  const usuario = await findByCorreo(correo);
+  let usuario;
+  try {
+    usuario = await findByCorreo(correo);
+  } catch (err) {
+    throw new Error('No se pudo conectar con el servidor');
+  }
   if (!usuario) {
     throw new Error('Credenciales inválidas');
   }

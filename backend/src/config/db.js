@@ -7,6 +7,8 @@ const { Pool } = pg;
 
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+  connectionTimeoutMillis: 5000,
+  query_timeout: 5000,
 });
 
 // Uso tipico en un repository:

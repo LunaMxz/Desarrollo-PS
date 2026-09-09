@@ -1,0 +1,277 @@
+/* Reset global para eliminar bordes blancos */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  background-color: #131C31;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.login-screen {
+  /* Paleta Elegante Multitono */
+  --navy: #131C31;
+  --charcoal: #383E45;
+  --terracotta: #BF6B46;
+  --beige: #C3A37C;
+  --crema: #F5EFE6;
+
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--navy);
+}
+
+@media (max-width: 720px) {
+  .login-screen {
+    justify-content: center;
+  }
+}
+
+/* ---------- Fondo SVG y Skyline ---------- */
+.fondo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.fondo svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.bloque {
+  fill: var(--charcoal);
+  opacity: 0;
+  transform-origin: bottom;
+  animation: subirBloque 1000ms cubic-bezier(0.22, 0.9, 0.32, 1) forwards;
+}
+
+.bloque--medio {
+  fill: #272C32;
+}
+
+.balcon {
+  fill: none;
+  stroke: rgba(195, 163, 124, 0.2);
+  stroke-width: 2;
+}
+
+.ventana {
+  fill: var(--beige);
+  opacity: 0;
+  animation: encender 6s ease-in-out infinite;
+}
+
+.ventana--acero {
+  fill: var(--terracotta);
+}
+
+@keyframes subirBloque {
+  from { opacity: 0; transform: translateY(22px) scaleY(0.92); }
+  to { opacity: 1; transform: translateY(0) scaleY(1); }
+}
+
+@keyframes encender {
+  0%, 100% { opacity: 0.15; }
+  40% { opacity: 0.15; }
+  52% { opacity: 0.9; }
+  82% { opacity: 0.9; }
+  94% { opacity: 0.15; }
+}
+
+/* Scrim suave que respeta las animaciones de fondo */
+.fondo__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(
+    circle at 80% 50%,
+    rgba(19, 28, 49, 0.3) 0%,
+    rgba(19, 28, 49, 0.75) 100%
+  );
+  pointer-events: none;
+}
+
+.fondo__marca {
+  position: absolute;
+  left: 56px;
+  bottom: 52px;
+  z-index: 2;
+  opacity: 0;
+  animation: aparecer 900ms ease-out 1s forwards;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fondo__eyebrow {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--beige);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.fondo__marca h2 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 1.2;
+  margin: 0;
+  max-width: 360px;
+  color: var(--crema);
+}
+
+@media (max-width: 720px) {
+  .fondo__marca {
+    display: none;
+  }
+}
+
+/* ---------- Tarjeta de Login Cristal Cálido ---------- */
+.login-panel {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 80px 0 0;
+}
+
+@media (max-width: 720px) {
+  .login-panel {
+    max-width: 90vw;
+    margin: 0 auto;
+  }
+}
+
+.login-card {
+  /* Cristal Navy translúcido con toque de calidez */
+  background: rgba(19, 28, 49, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  
+  /* Borde fino en tono Beige elegante */
+  border: 1px solid rgba(195, 163, 124, 0.25);
+  border-top-color: rgba(195, 163, 124, 0.5);
+  border-left-color: rgba(191, 107, 70, 0.3);
+  border-radius: 20px;
+  padding: 48px 40px;
+  
+  box-shadow: 
+    0 25px 50px -10px rgba(0, 0, 0, 0.7),
+    0 0 25px rgba(191, 107, 70, 0.1);
+  
+  opacity: 0;
+  animation: entrarTarjeta 850ms cubic-bezier(0.22, 0.9, 0.32, 1) 250ms forwards;
+}
+
+@keyframes entrarTarjeta {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.login-card__title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: 30px;
+  margin: 0 0 6px;
+  color: var(--crema);
+}
+
+.login-card__subtitle {
+  margin: 0 0 32px;
+  font-size: 14px;
+  color: var(--beige);
+  opacity: 0.9;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--crema);
+  font-weight: 500;
+}
+
+.login-form__field input {
+  background: rgba(10, 16, 28, 0.55);
+  border: 1.5px solid rgba(195, 163, 124, 0.25);
+  border-radius: 10px;
+  padding: 14px 16px;
+  color: var(--crema);
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: all 200ms ease;
+}
+
+.login-form__field input::placeholder {
+  color: rgba(245, 239, 230, 0.35);
+}
+
+.login-form__field input:focus {
+  background: rgba(10, 16, 28, 0.85);
+  border-color: var(--terracotta);
+  box-shadow: 0 0 12px rgba(191, 107, 70, 0.3);
+  transform: translateY(-1px);
+}
+
+.login-form__error {
+  margin: 0;
+  font-size: 13px;
+  color: #FFD4D4;
+  background: rgba(120, 20, 20, 0.5);
+  border: 1px solid #E53E3E;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+/* Botón Terracota Destacado */
+.login-form__submit {
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  padding: 16px;
+  background: linear-gradient(135deg, #BF6B46 0%, #A45533 100%);
+  color: #FFFFFF;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 8px 20px rgba(191, 107, 70, 0.35);
+  transition: all 200ms ease;
+}
+
+.login-form__submit:hover {
+  background: linear-gradient(135deg, #CE7750 0%, #BF6B46 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(191, 107, 70, 0.5);
+}
+
+.login-form__submit:active {
+  transform: translateY(0);
+}

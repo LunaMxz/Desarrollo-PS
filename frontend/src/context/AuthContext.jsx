@@ -1,18 +1,44 @@
-import { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { login as loginService, logout as logoutService } from '../api/client';
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [cargando, setCargando] = useState(true);
 
-  // TODO (CU-01): implementar login(correo, password) que llame al backend,
-  // guarde el token en localStorage y actualice `user` con el rol recibido.
+  // Rehidrata la sesión guardada al cargar o recargar la página
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userGuardado = localStorage.getItem('user');
 
-  const value = { user, setUser };
+    if (token && userGuardado) {
+      try {
+        setUser(JSON.parse(userGuardado));
+      } catch (error) {
+        console.error('Error al parsear el usuario guardado:', error);
+        logoutService();
+      }
+    }
+    setCargando(false);
+  }, []);
+
+  const login = async (correo, password) => {
+    const result = await loginService(correo, password);
+    if (result.success) {
+      setUser(result.user);
+    }
+    return result;
+  };
+
+  const logout = () => {
+    logoutService();
+    setUser(null);
+  };
+
+  const value = { user, login, logout, cargando };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth() {
-  return useContext(AuthContext);
-}
+export const useAuth = () => useContext(AuthContext);

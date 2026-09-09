@@ -1,17 +1,36 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import LoginPage from './pages/LoginPage.jsx';
-// import ProtectedRoute from './components/ProtectedRoute.jsx';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import Login from './pages/LoginPage';
+import ProtectedRoute from './components/ProtectedRoute';
 
-function App() {
+// Vistas de ejemplo
+const AdminDashboard = () => <h1>Panel de Administrador</h1>;
+const ResidentesPage = () => <h1>Panel de Residentes</h1>;
+const BitacoraPage = () => <h1>Bitacora Guardia</h1>;
+
+export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        {/* TODO (equipo frontend): agregar rutas protegidas para
-            residentes, cuotas, incidencias, etc. usando <ProtectedRoute> */}
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Ruta pública */}
+          <Route path="/login" element={<Login />} />
+
+          {/* Rutas Privadas */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/residentes" element={<ResidentesPage />} />
+            <Route path="/bitacora" element={<BitacoraPage />} />
+          </Route>
+
+          {/* Rutas Privadas restringidas por Rol */}
+          <Route element={<ProtectedRoute rolesPermitidos={['admin']} />}>
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          </Route>
+
+          {/* Redirección por defecto */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
-
-export default App;

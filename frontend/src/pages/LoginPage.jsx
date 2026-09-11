@@ -56,7 +56,6 @@ export default function LoginPage() {
   const rutasPorRol = {
     admin: '/admin/dashboard',
     residente: '/residentes',
-    guardia: '/bitacora',
   };
 
   const handleSubmit = async (e) => {

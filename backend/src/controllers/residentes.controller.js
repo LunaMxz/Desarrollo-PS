@@ -4,6 +4,7 @@ import {
   listar,
   obtenerDetalle,
   desactivar,
+  darDeBaja,
   cambiarRol,
 } from '../services/residentes.service.js';
 
@@ -63,6 +64,31 @@ export async function desactivarResidenteHandler(req, res, next) {
   } catch (err) {
     if (
       err.message === 'Usuario no encontrado' ||
+      err.message === 'No se puede desactivar a un administrador' ||
+      err.message === 'No puedes desactivarte a ti mismo'
+    ) {
+      err.status = 400;
+    }
+    next(err);
+  }
+}
+
+// CU-05: baja de residente (soft delete). No borra el registro, solo pone
+// activo = false; la sesión/token del residente queda revocada de facto
+// porque requireAuth revalida "activo" en cada request contra la BD.
+export async function bajaResidenteHandler(req, res, next) {
+  try {
+    const { residente, avisoSaldoPendiente } = await darDeBaja(req.params.id, req.user.id);
+    res.json({
+      message: 'Residente dado de baja exitosamente',
+      residente,
+      aviso: avisoSaldoPendiente,
+    });
+  } catch (err) {
+    if (err.message === 'Usuario no encontrado') {
+      err.status = 404;
+    }
+    if (
       err.message === 'No se puede desactivar a un administrador' ||
       err.message === 'No puedes desactivarte a ti mismo'
     ) {

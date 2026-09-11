@@ -1,0 +1,215 @@
+.alta-residente-screen {
+  /* Misma paleta que LoginPage para mantener armonía visual */
+  --navy: #131C31;
+  --charcoal: #383E45;
+  --terracotta: #BF6B46;
+  --beige: #C3A37C;
+  --crema: #F5EFE6;
+
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: radial-gradient(circle at 30% 20%, #212A3E 0%, var(--navy) 65%);
+}
+
+.alta-residente-panel {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 40px 20px;
+}
+
+.alta-residente-panel > .alta-residente-card {
+  width: 100%;
+  max-width: 420px;
+}
+
+.alta-residente-card {
+  background: rgba(19, 28, 49, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(195, 163, 124, 0.25);
+  border-top-color: rgba(195, 163, 124, 0.5);
+  border-left-color: rgba(191, 107, 70, 0.3);
+  border-radius: 20px;
+  padding: 48px 40px;
+
+  box-shadow:
+    0 25px 50px -10px rgba(0, 0, 0, 0.7),
+    0 0 25px rgba(191, 107, 70, 0.1);
+}
+
+.alta-residente-card__title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: 28px;
+  margin: 0 0 6px;
+  color: var(--crema);
+}
+
+.alta-residente-card__subtitle {
+  margin: 0 0 32px;
+  font-size: 14px;
+  color: var(--beige);
+  opacity: 0.9;
+}
+
+.alta-residente-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.alta-residente-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--crema);
+  font-weight: 500;
+}
+
+.alta-residente-form__field input {
+  background: rgba(10, 16, 28, 0.55);
+  border: 1.5px solid rgba(195, 163, 124, 0.25);
+  border-radius: 10px;
+  padding: 14px 16px;
+  color: var(--crema);
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: all 200ms ease;
+}
+
+.alta-residente-form__field input::placeholder {
+  color: rgba(245, 239, 230, 0.35);
+}
+
+.alta-residente-form__field input:focus {
+  background: rgba(10, 16, 28, 0.85);
+  border-color: var(--terracotta);
+  box-shadow: 0 0 12px rgba(191, 107, 70, 0.3);
+  transform: translateY(-1px);
+}
+
+.alta-residente-form__error {
+  margin: 0;
+  font-size: 13px;
+  color: #FFD4D4;
+  background: rgba(120, 20, 20, 0.5);
+  border: 1px solid #E53E3E;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.alta-residente-form__submit {
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  padding: 16px;
+  background: linear-gradient(135deg, #BF6B46 0%, #A45533 100%);
+  color: #FFFFFF;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 8px 20px rgba(191, 107, 70, 0.35);
+  transition: all 200ms ease;
+}
+
+.alta-residente-form__submit:hover {
+  background: linear-gradient(135deg, #CE7750 0%, #BF6B46 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(191, 107, 70, 0.5);
+}
+
+.alta-residente-form__submit:active {
+  transform: translateY(0);
+}
+
+.alta-residente-form__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #FFFFFF;
+  border-radius: 50%;
+  animation: girar 700ms linear infinite;
+}
+
+@keyframes girar {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- Confirmación de alta exitosa ---------- */
+.alta-residente-confirm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+}
+
+.alta-residente-confirm__icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(191, 107, 70, 0.2);
+  border: 1.5px solid var(--terracotta);
+  color: var(--terracotta);
+  font-size: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.alta-residente-confirm__title {
+  margin: 0 0 20px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--crema);
+}
+
+.alta-residente-confirm__details {
+  width: 100%;
+  margin: 0 0 16px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 12px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.alta-residente-confirm__details dt {
+  color: var(--beige);
+  font-weight: 500;
+}
+
+.alta-residente-confirm__details dd {
+  margin: 0;
+  color: var(--crema);
+}
+
+.alta-residente-confirm__password {
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--terracotta);
+}
+
+.alta-residente-confirm__hint {
+  margin: 0 0 24px;
+  font-size: 12px;
+  color: var(--beige);
+  opacity: 0.85;
+}

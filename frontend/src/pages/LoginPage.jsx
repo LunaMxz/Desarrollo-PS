@@ -1,12 +1,101 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import './LoginPage.css';
+
+// Tres torres de apartamentos con distinta altura y separación
+const EDIFICIOS = [
+  { x: 40, ancho: 190, pisos: 15, seed: 1, medio: false },
+  { x: 250, ancho: 260, pisos: 19, seed: 2, medio: true },
+  { x: 540, ancho: 210, pisos: 12, seed: 3, medio: false },
+];
+
+function construirEdificio({ x, ancho, pisos, seed }) {
+  const altoPiso = 46;
+  const baseY = 900;
+  const pisosArr = [];
+
+  for (let p = 0; p < pisos; p++) {
+    const y = baseY - (p + 1) * altoPiso;
+    const numVentanas = Math.max(2, Math.floor(ancho / 34));
+    const ventanas = [];
+    for (let v = 0; v < numVentanas; v++) {
+      const idx = p * 7 + v * 3 + seed;
+      if (idx % 5 === 0) continue;
+      ventanas.push({
+        x: x + 14 + v * ((ancho - 28) / numVentanas),
+        y: y + 14,
+        acero: idx % 6 === 0,
+        delay: `${((idx * 3) % 16) * 0.35}s`,
+      });
+    }
+    pisosArr.push({
+      key: `p-${p}`,
+      x,
+      y,
+      ancho,
+      alto: altoPiso - 3,
+      delay: `${(pisos - p) * 35 + seed * 20}ms`,
+      ventanas,
+    });
+  }
+  return pisosArr;
+}
+
 export default function LoginPage() {
-  // TODO (CU-01 Frontend): formulario de login con correo/contraseña,
-  // manejo de error de credenciales incorrectas y timeout de red,
-  // y redireccion segun el rol recibido tras el login exitoso.
+  const [correo, setCorreo] = useState('');
+  const [password, setPassword] = useState('');
+  const [mostrarPassword, setMostrarPassword] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [cargando, setCargando] = useState(false);
+
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  // Diccionario para redirigir según el rol del usuario
+  const rutasPorRol = {
+    admin: '/admin/dashboard',
+    residente: '/residentes',
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Evita doble envío si el usuario hace doble click antes de que
+    // React repinte el botón como disabled
+    if (cargando) return;
+
+    setErrorMsg('');
+    setCargando(true);
+
+    try {
+      // trim() en el correo evita falsos "credenciales inválidas" por espacios
+      // accidentales al copiar/pegar; la contraseña se envía tal cual la escribió el usuario
+      const result = await login(correo.trim(), password);
+
+      if (result.success) {
+        // Redirige según el rol (si no coincide con ningún rol, va a /dashboard por defecto)
+        const rolUsuario = result.user?.rol;
+        const destino = rutasPorRol[rolUsuario] || '/dashboard';
+
+        navigate(destino, { replace: true });
+      } else {
+        setErrorMsg(result.error);
+      }
+    } catch (err) {
+      // Manejo defensivo: login() de client.js normalmente captura sus propios
+      // errores y nunca lanza, pero se mantiene por si esa lógica cambia.
+      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        setErrorMsg('El servidor tardó demasiado en responder. Intente más tarde.');
+      } else {
+        setErrorMsg('Ocurrió un error inesperado al intentar iniciar sesión.');
+      }
+    } finally {
+      setCargando(false);
+    }
+  };
 
   return (
-    <div>
-      <h1>Iniciar sesion</h1>
-      <p>TODO: construir el formulario de login aqui.</p>
     <div className="login-screen">
       {/* Fondo ilustrado */}
       <div className="fondo">

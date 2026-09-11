@@ -1,0 +1,72 @@
+.admin-dashboard-screen {
+  --navy: #131C31;
+  --charcoal: #383E45;
+  --terracotta: #BF6B46;
+  --beige: #C3A37C;
+  --crema: #F5EFE6;
+
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: radial-gradient(circle at 30% 0%, #212A3E 0%, var(--navy) 65%);
+}
+
+.admin-dashboard-contenido {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.admin-dashboard-seccion__titulo {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: 20px;
+  margin: 0 0 16px;
+  color: var(--crema);
+}
+
+.admin-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.admin-dashboard-tarjeta {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  background: rgba(19, 28, 49, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(195, 163, 124, 0.25);
+  border-radius: 16px;
+  padding: 22px;
+  transition: all 200ms ease;
+}
+
+a.admin-dashboard-tarjeta:hover {
+  transform: translateY(-3px);
+  border-color: var(--terracotta);
+  box-shadow: 0 12px 24px rgba(191, 107, 70, 0.2);
+}
+
+.admin-dashboard-tarjeta h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--crema);
+}
+
+.admin-dashboard-tarjeta p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--beige);
+}
+
+.admin-dashboard-tarjeta--deshabilitada {
+  opacity: 0.55;
+  cursor: default;
+}

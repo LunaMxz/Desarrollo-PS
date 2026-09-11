@@ -7,6 +7,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 const AdminDashboard = () => <h1>Panel de Administrador</h1>;
 const ResidentesPage = () => <h1>Panel de Residentes</h1>;
 const BitacoraPage = () => <h1>Bitacora Guardia</h1>;
+// Referenciada por ProtectedRoute cuando el rol del usuario no tiene permiso
+const Unauthorized = () => <h1>No tienes permiso para ver esta página</h1>;
 
 export default function App() {
   return (
@@ -15,6 +17,9 @@ export default function App() {
         <Routes>
           {/* Ruta pública */}
           <Route path="/login" element={<Login />} />
+
+          {/* Ruta de acceso denegado por rol */}
+          <Route path="/unauthorized" element={<Unauthorized />} />
 
           {/* Rutas Privadas */}
           <Route element={<ProtectedRoute />}>

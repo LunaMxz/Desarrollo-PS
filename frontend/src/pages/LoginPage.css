@@ -275,3 +275,41 @@ html, body {
 .login-form__submit:active {
   transform: translateY(0);
 }
+
+/* ---------- Toggle mostrar/ocultar contraseña ---------- */
+.login-form__password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.login-form__password-wrapper input {
+  width: 100%;
+  padding-right: 64px; /* espacio para el botón */
+}
+
+.login-form__toggle-password {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--beige);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: color 150ms ease, background-color 150ms ease;
+}
+
+.login-form__toggle-password:hover {
+  color: var(--crema);
+  background: rgba(195, 163, 124, 0.12);
+}
+
+.login-form__toggle-password:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

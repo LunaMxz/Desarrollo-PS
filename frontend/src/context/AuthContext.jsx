@@ -9,18 +9,27 @@ export function AuthProvider({ children }) {
 
   // Rehidrata la sesión guardada al cargar o recargar la página
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userGuardado = localStorage.getItem('user');
+    try {
+      const token = localStorage.getItem('token');
+      const userGuardado = localStorage.getItem('user');
 
-    if (token && userGuardado) {
-      try {
-        setUser(JSON.parse(userGuardado));
-      } catch (error) {
-        console.error('Error al parsear el usuario guardado:', error);
+      if (token && userGuardado) {
+        try {
+          setUser(JSON.parse(userGuardado));
+        } catch (error) {
+          console.error('Error al parsear el usuario guardado:', error);
+          logoutService();
+        }
+      } else if (token && !userGuardado) {
+        // Token sin usuario asociado: estado inconsistente en localStorage, se descarta
         logoutService();
       }
+    } catch (error) {
+      // localStorage puede no estar disponible en algunos navegadores/modos
+      console.error('No se pudo leer la sesión guardada:', error);
+    } finally {
+      setCargando(false);
     }
-    setCargando(false);
   }, []);
 
   const login = async (correo, password) => {

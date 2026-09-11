@@ -1,93 +1,12 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import './LoginPage.css';
-
-// Tres torres de apartamentos con distinta altura y separación
-const EDIFICIOS = [
-  { x: 40, ancho: 190, pisos: 15, seed: 1, medio: false },
-  { x: 250, ancho: 260, pisos: 19, seed: 2, medio: true },
-  { x: 540, ancho: 210, pisos: 12, seed: 3, medio: false },
-];
-
-function construirEdificio({ x, ancho, pisos, seed }) {
-  const altoPiso = 46;
-  const baseY = 900;
-  const pisosArr = [];
-
-  for (let p = 0; p < pisos; p++) {
-    const y = baseY - (p + 1) * altoPiso;
-    const numVentanas = Math.max(2, Math.floor(ancho / 34));
-    const ventanas = [];
-    for (let v = 0; v < numVentanas; v++) {
-      const idx = p * 7 + v * 3 + seed;
-      if (idx % 5 === 0) continue;
-      ventanas.push({
-        x: x + 14 + v * ((ancho - 28) / numVentanas),
-        y: y + 14,
-        acero: idx % 6 === 0,
-        delay: `${((idx * 3) % 16) * 0.35}s`,
-      });
-    }
-    pisosArr.push({
-      key: `p-${p}`,
-      x,
-      y,
-      ancho,
-      alto: altoPiso - 3,
-      delay: `${(pisos - p) * 35 + seed * 20}ms`,
-      ventanas,
-    });
-  }
-  return pisosArr;
-}
-
-export default function Login() {
-  const [correo, setCorreo] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
-  const [cargando, setCargando] = useState(false);
-
-  const { login } = useAuth();
-  const navigate = useNavigate();
-
-  // Diccionario para redirigir según el rol del usuario
-  const rutasPorRol = {
-    admin: '/admin/dashboard',
-    residente: '/residentes',
-    guardia: '/bitacora',
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErrorMsg('');
-    setCargando(true);
-
-    try {
-      const result = await login(correo, password);
-
-      if (result.success) {
-        // Redirige según el rol (si no coincide con ningún rol, va a /dashboard por defecto)
-        const rolUsuario = result.user?.rol;
-        const destino = rutasPorRol[rolUsuario] || '/dashboard';
-
-        navigate(destino, { replace: true });
-      } else {
-        setErrorMsg(result.error);
-      }
-    } catch (err) {
-      // Manejo específico para casos de timeout de Axios
-      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
-        setErrorMsg('El servidor tardó demasiado en responder. Intente más tarde.');
-      } else {
-        setErrorMsg('Ocurrió un error inesperado al intentar iniciar sesión.');
-      }
-    } finally {
-      setCargando(false);
-    }
-  };
+export default function LoginPage() {
+  // TODO (CU-01 Frontend): formulario de login con correo/contraseña,
+  // manejo de error de credenciales incorrectas y timeout de red,
+  // y redireccion segun el rol recibido tras el login exitoso.
 
   return (
+    <div>
+      <h1>Iniciar sesion</h1>
+      <p>TODO: construir el formulario de login aqui.</p>
     <div className="login-screen">
       {/* Fondo ilustrado */}
       <div className="fondo">
@@ -169,16 +88,29 @@ export default function Login() {
 
             <label className="login-form__field" htmlFor="password">
               <span>Contraseña</span>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                autoComplete="current-password"
-                disabled={cargando}
-              />
+              <div className="login-form__password-wrapper">
+                <input
+                  id="password"
+                  type={mostrarPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  autoComplete="current-password"
+                  disabled={cargando}
+                />
+                <button
+                  type="button"
+                  className="login-form__toggle-password"
+                  onClick={() => setMostrarPassword((prev) => !prev)}
+                  disabled={cargando}
+                  aria-label={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                  aria-pressed={mostrarPassword}
+                  tabIndex={-1}
+                >
+                  {mostrarPassword ? 'Ocultar' : 'Ver'}
+                </button>
+              </div>
             </label>
 
             {errorMsg && (

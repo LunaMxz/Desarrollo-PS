@@ -4,6 +4,7 @@ import {
   listarResidentesHandler,
   obtenerResidenteHandler,
   desactivarResidenteHandler,
+  bajaResidenteHandler,
   cambiarRolHandler,
 } from '../controllers/residentes.controller.js';
 import { requireAuth, requireAdmin } from '../middlewares/auth.middleware.js';
@@ -14,6 +15,7 @@ router.get('/', requireAuth, requireAdmin, listarResidentesHandler);
 router.get('/:id', requireAuth, requireAdmin, obtenerResidenteHandler);
 router.post('/', requireAuth, requireAdmin, crearResidenteHandler);
 router.patch('/:id/desactivar', requireAuth, requireAdmin, desactivarResidenteHandler);
+router.patch('/:id/baja', requireAuth, requireAdmin, bajaResidenteHandler); // CU-05
 router.patch('/:id/rol', requireAuth, requireAdmin, cambiarRolHandler);
 
 export default router;

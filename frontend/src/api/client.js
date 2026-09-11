@@ -19,8 +19,6 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-<<<<<<< HEAD
-=======
 // Inicia sesión contra el backend y persiste el token + usuario en localStorage.
 // Devuelve { success, user, error } para que AuthContext lo consuma directamente.
 export async function login(correo, password) {
@@ -65,5 +63,8 @@ export function logout() {
   }
 }
 
->>>>>>> 14e6a9e (CU01: Login frontend listo)
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+}
+
 export default apiClient;

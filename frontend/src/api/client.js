@@ -93,6 +93,55 @@ export async function crearResidente(correo, unidadId) {
   }
 }
 
+// Lista los residentes para la ficha/panel de administración.
+// Por defecto solo trae activos; soloActivos=false incluye también los dados de baja.
+// Devuelve { success, residentes, error }.
+export async function listarResidentes(soloActivos = true) {
+  try {
+    const response = await apiClient.get('/residentes', { params: { soloActivos } });
+    return { success: true, residentes: response.data.residentes };
+  } catch (err) {
+    let error;
+    if (err.code === 'ECONNABORTED') {
+      error = 'El servidor tardó demasiado en responder. Intente más tarde.';
+    } else if (err.code === 'ERR_NETWORK' || !err.response) {
+      error = 'No se pudo conectar con el servidor. Verifica tu conexión e intenta de nuevo.';
+    } else if (err.response?.status === 401 || err.response?.status === 403) {
+      error = err.response?.data?.error || 'No tienes permiso para ver los residentes.';
+    } else if (err.response?.status >= 500) {
+      error = err.response?.data?.error || 'El servidor tuvo un problema. Intenta más tarde.';
+    } else {
+      error = err.response?.data?.error || 'Ocurrió un error inesperado. Intenta más tarde.';
+    }
+    return { success: false, error };
+  }
+}
+
+// Da de baja (desactiva) a un residente. El backend solo marca activo=false,
+// nunca borra el registro. Devuelve { success, residente, aviso, error }.
+export async function darDeBajaResidente(id) {
+  try {
+    const response = await apiClient.patch(`/residentes/${id}/baja`);
+    return { success: true, residente: response.data.residente, aviso: response.data.aviso };
+  } catch (err) {
+    let error;
+    if (err.code === 'ECONNABORTED') {
+      error = 'El servidor tardó demasiado en responder. Intente más tarde.';
+    } else if (err.code === 'ERR_NETWORK' || !err.response) {
+      error = 'No se pudo conectar con el servidor. Verifica tu conexión e intenta de nuevo.';
+    } else if (err.response?.status === 404) {
+      error = err.response?.data?.error || 'El residente no existe.';
+    } else if (err.response?.status === 401 || err.response?.status === 403) {
+      error = err.response?.data?.error || 'No tienes permiso para dar de baja residentes.';
+    } else if (err.response?.status >= 500) {
+      error = err.response?.data?.error || 'El servidor tuvo un problema. Intenta más tarde.';
+    } else {
+      error = err.response?.data?.error || 'Ocurrió un error inesperado. Intenta más tarde.';
+    }
+    return { success: false, error };
+  }
+}
+
 // Limpia la sesión guardada localmente
 export function logout() {
   try {

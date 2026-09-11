@@ -1,0 +1,240 @@
+.baja-residente-screen {
+  /* Misma paleta que LoginPage/AltaResidentePage para mantener armonía visual */
+  --navy: #131C31;
+  --charcoal: #383E45;
+  --terracotta: #BF6B46;
+  --beige: #C3A37C;
+  --crema: #F5EFE6;
+
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 56px 20px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: radial-gradient(circle at 30% 20%, #212A3E 0%, var(--navy) 65%);
+}
+
+.baja-residente-panel {
+  width: 100%;
+  max-width: 640px;
+}
+
+.baja-residente-panel__title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: 28px;
+  margin: 0 0 6px;
+  color: var(--crema);
+}
+
+.baja-residente-panel__subtitle {
+  margin: 0 0 28px;
+  font-size: 14px;
+  color: var(--beige);
+  opacity: 0.9;
+}
+
+.baja-residente-panel__estado {
+  color: var(--beige);
+  font-size: 14px;
+}
+
+.baja-residente-panel__error {
+  margin: 0;
+  font-size: 13px;
+  color: #FFD4D4;
+  background: rgba(120, 20, 20, 0.5);
+  border: 1px solid #E53E3E;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.baja-residente-panel__exito {
+  margin: 0 0 20px;
+  font-size: 13px;
+  color: #D6F5DE;
+  background: rgba(20, 90, 50, 0.45);
+  border: 1px solid #3FA867;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+/* ---------- Ficha por residente ---------- */
+.ficha-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ficha-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: rgba(19, 28, 49, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(195, 163, 124, 0.25);
+  border-radius: 14px;
+  padding: 20px 24px;
+}
+
+.ficha-card__info {
+  min-width: 0;
+}
+
+.ficha-card__correo {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--crema);
+  overflow-wrap: anywhere;
+}
+
+.ficha-card__unidad {
+  margin: 0;
+  font-size: 13px;
+  color: var(--beige);
+}
+
+.ficha-card__boton-baja {
+  flex-shrink: 0;
+  border: 1.5px solid #E53E3E;
+  border-radius: 10px;
+  padding: 10px 18px;
+  background: rgba(229, 62, 62, 0.12);
+  color: #FFD4D4;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.ficha-card__boton-baja:hover {
+  background: rgba(229, 62, 62, 0.28);
+  transform: translateY(-1px);
+}
+
+/* ---------- Modal de confirmación ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 16, 28, 0.75);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 10;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 420px;
+  background: #1A2338;
+  border: 1px solid rgba(195, 163, 124, 0.3);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.7);
+}
+
+.modal-card__titulo {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: 20px;
+  margin: 0 0 10px;
+  color: var(--crema);
+}
+
+.modal-card__residente {
+  margin: 0 0 18px;
+  font-size: 14px;
+  color: var(--beige);
+}
+
+.modal-card__advertencia {
+  margin: 0 0 20px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #FFE9C7;
+  background: rgba(191, 107, 70, 0.18);
+  border: 1px solid var(--terracotta);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.modal-card__error {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: #FFD4D4;
+  background: rgba(120, 20, 20, 0.5);
+  border: 1px solid #E53E3E;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.modal-card__acciones {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modal-card__boton-cancelar {
+  border: 1.5px solid rgba(195, 163, 124, 0.4);
+  border-radius: 10px;
+  padding: 12px 18px;
+  background: transparent;
+  color: var(--crema);
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.modal-card__boton-cancelar:hover {
+  background: rgba(195, 163, 124, 0.12);
+}
+
+.modal-card__boton-confirmar {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #E53E3E 0%, #B93030 100%);
+  color: #FFFFFF;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 200ms ease;
+}
+
+.modal-card__boton-confirmar:hover {
+  background: linear-gradient(135deg, #F05252 0%, #E53E3E 100%);
+}
+
+.modal-card__boton-cancelar:disabled,
+.modal-card__boton-confirmar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #FFFFFF;
+  border-radius: 50%;
+  animation: girar 700ms linear infinite;
+}
+
+@keyframes girar {
+  to { transform: rotate(360deg); }
+}

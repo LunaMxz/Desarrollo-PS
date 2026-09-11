@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Login from './pages/LoginPage';
 import AltaResidentePage from './pages/AltaResidentePage';
+import BajaResidentePage from './pages/BajaResidentePage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Vistas de ejemplo
@@ -32,6 +33,7 @@ export default function App() {
           <Route element={<ProtectedRoute rolesPermitidos={['admin']} />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/residentes/alta" element={<AltaResidentePage />} />
+            <Route path="/admin/residentes/baja" element={<BajaResidentePage />} />
           </Route>
 
           {/* Redirección por defecto */}

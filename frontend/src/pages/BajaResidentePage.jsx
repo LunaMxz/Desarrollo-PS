@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { listarResidentes, darDeBajaResidente } from '../api/client';
+import AdminHeader from '../components/AdminHeader';
 import './BajaResidentePage.css';
 
 export default function BajaResidentePage() {
@@ -63,6 +64,7 @@ export default function BajaResidentePage() {
 
   return (
     <div className="baja-residente-screen">
+      <AdminHeader titulo="Baja de residente" />
       <div className="baja-residente-panel">
         <h1 className="baja-residente-panel__title">Residentes activos</h1>
         <p className="baja-residente-panel__subtitle">

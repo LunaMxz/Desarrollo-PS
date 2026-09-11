@@ -7,15 +7,18 @@
   --crema: #F5EFE6;
 
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
   font-family: 'Inter', -apple-system, sans-serif;
   background: radial-gradient(circle at 30% 20%, #212A3E 0%, var(--navy) 65%);
 }
 
 .alta-residente-panel {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 40px 20px;
+}
+
+.alta-residente-panel > .alta-residente-card {
   width: 100%;
   max-width: 420px;
 }

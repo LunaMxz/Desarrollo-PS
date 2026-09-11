@@ -1,0 +1,108 @@
+.residente-home-screen {
+  --navy: #131C31;
+  --charcoal: #383E45;
+  --terracotta: #BF6B46;
+  --beige: #C3A37C;
+  --crema: #F5EFE6;
+
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: radial-gradient(circle at 30% 0%, #212A3E 0%, var(--navy) 65%);
+}
+
+.residente-home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 24px 32px;
+  background: rgba(19, 28, 49, 0.7);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(195, 163, 124, 0.2);
+}
+
+.residente-home-header__eyebrow {
+  margin: 0 0 4px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--beige);
+  font-weight: 600;
+}
+
+.residente-home-header__titulo {
+  margin: 0;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: 22px;
+  color: var(--crema);
+}
+
+.residente-home-header__logout {
+  border: 1.5px solid rgba(195, 163, 124, 0.35);
+  border-radius: 8px;
+  padding: 9px 16px;
+  background: transparent;
+  color: var(--crema);
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.residente-home-header__logout:hover {
+  background: rgba(191, 107, 70, 0.18);
+  border-color: var(--terracotta);
+}
+
+.residente-home-contenido {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+}
+
+.residente-home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.residente-home-tarjeta {
+  opacity: 0.6;
+  background: rgba(19, 28, 49, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(195, 163, 124, 0.25);
+  border-radius: 16px;
+  padding: 22px;
+}
+
+.residente-home-tarjeta h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--crema);
+}
+
+.residente-home-tarjeta p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--beige);
+}
+
+.residente-home-tarjeta__badge {
+  display: inline-block;
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--terracotta);
+  background: rgba(191, 107, 70, 0.15);
+  border-radius: 6px;
+  padding: 4px 8px;
+}

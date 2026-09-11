@@ -7,14 +7,19 @@
   --crema: #F5EFE6;
 
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  padding: 56px 20px;
   font-family: 'Inter', -apple-system, sans-serif;
   background: radial-gradient(circle at 30% 20%, #212A3E 0%, var(--navy) 65%);
 }
 
 .baja-residente-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 56px 20px;
+}
+
+.baja-residente-panel > * {
   width: 100%;
   max-width: 640px;
 }

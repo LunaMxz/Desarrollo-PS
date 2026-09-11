@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { crearResidente } from '../api/client';
+import AdminHeader from '../components/AdminHeader';
 import './AltaResidentePage.css';
 
 export default function AltaResidentePage() {
@@ -54,6 +55,7 @@ export default function AltaResidentePage() {
 
   return (
     <div className="alta-residente-screen">
+      <AdminHeader titulo="Alta de residente" />
       <div className="alta-residente-panel">
         <div className="alta-residente-card">
           <h1 className="alta-residente-card__title">Alta de residente</h1>

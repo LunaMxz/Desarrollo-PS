@@ -53,6 +53,46 @@ export async function login(correo, password) {
   }
 }
 
+// Genera una contraseña temporal segura para asignarle al residente al darlo de alta.
+// El admin la comunica al residente fuera del sistema; no hay flujo de invitación por correo.
+export function generarPasswordTemporal() {
+  const alfabeto = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%';
+  const bytes = new Uint32Array(12);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => alfabeto[b % alfabeto.length]).join('');
+}
+
+// Da de alta un residente. El backend exige correo, password y unidad_id;
+// la password temporal se genera en el frontend (ver generarPasswordTemporal).
+// Devuelve { success, residente, passwordTemporal, error }.
+export async function crearResidente(correo, unidadId) {
+  const passwordTemporal = generarPasswordTemporal();
+
+  try {
+    const response = await apiClient.post('/residentes', {
+      correo,
+      password: passwordTemporal,
+      unidad_id: unidadId,
+    });
+
+    return { success: true, residente: response.data.residente, passwordTemporal };
+  } catch (err) {
+    let error;
+    if (err.code === 'ECONNABORTED') {
+      error = 'El servidor tardó demasiado en responder. Intente más tarde.';
+    } else if (err.code === 'ERR_NETWORK' || !err.response) {
+      error = 'No se pudo conectar con el servidor. Verifica tu conexión e intenta de nuevo.';
+    } else if (err.response?.status === 401 || err.response?.status === 403) {
+      error = err.response?.data?.error || 'No tienes permiso para dar de alta residentes.';
+    } else if (err.response?.status >= 500) {
+      error = err.response?.data?.error || 'El servidor tuvo un problema. Intenta más tarde.';
+    } else {
+      error = err.response?.data?.error || 'Ocurrió un error inesperado. Intenta más tarde.';
+    }
+    return { success: false, error };
+  }
+}
+
 // Limpia la sesión guardada localmente
 export function logout() {
   try {

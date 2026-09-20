@@ -10,6 +10,8 @@ export async function asignarResponsableHandler(req, res, next) {
             incidencia,
         });
     } catch (err) {
+        if (err.message === 'Incidencia no encontrada') err.status = 404;
+        if (err.message === 'Id de incidencia inválido') err.status = 400;
         next(err);
     }
 }

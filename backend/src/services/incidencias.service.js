@@ -1,7 +1,7 @@
 import { findById, actualizarResponsableYEstado, } from '../repositories/incidencias.repository.js';
 const ESTADOS_VALIDOS = ['abierto', 'en_proceso', 'resuelto'];
 export async function obtenerIncidenciaOError(id) {
-    if (!id || Number.isNaN(Number(id))) {
+    if (id === undefined || id === null || Number.isNaN(Number(id))) {
         const error = new Error('Id de incidencia inválido');
         error.status = 400;
         throw error;
@@ -26,7 +26,7 @@ export async function actualizarIncidencia(id, { responsable, estado } = {}) {
         incidencia = await actualizarResponsableYEstado(id, { responsable, estado });
     } catch (err) {
         if (err.code === '22P02') {
-            const error = new Error('Estado inválido. Debe ser "abierto", "en_proceso" o "resuelto"');
+            const error = new Error('Estado o id inválido');
             error.status = 400;
             throw error;
         }
@@ -51,8 +51,8 @@ export async function asignarResponsable(id, responsable) {
         error.status = 409;
         throw error;
     }
-    const responsableAnterior = incidencia.responsable ?? null;
+    const responsableAnterior = incidencia.responsable || null;
     const reasignada = Boolean(responsableAnterior);
     const actualizada = await actualizarIncidencia(id, {responsable: responsable.trim(), estado: 'en_proceso',});
-    return { incidencia: actualizada, reasignada, responsableAnterior,};
+    return { incidencia: actualizada, reasignada, responsableAnterior };
 }

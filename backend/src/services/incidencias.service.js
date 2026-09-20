@@ -51,5 +51,8 @@ export async function asignarResponsable(id, responsable) {
         error.status = 409;
         throw error;
     }
-    return actualizarIncidencia(id, {responsable: responsable.trim(), estado: 'en_proceso',});
+    const responsableAnterior = incidencia.responsable ?? null;
+    const reasignada = Boolean(responsableAnterior);
+    const actualizada = await actualizarIncidencia(id, {responsable: responsable.trim(), estado: 'en_proceso',});
+    return { incidencia: actualizada, reasignada, responsableAnterior,};
 }

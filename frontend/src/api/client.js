@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  timeout: 8000, // evita que el login quede esperando indefinidamente si el backend no responde
+  timeout: 8000, // evita que las peticiones queden esperando indefinidamente si el backend no responde
 });
 
 // Adjunta el JWT guardado a cada request, si existe
@@ -18,6 +18,29 @@ apiClient.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Traduce un error de axios a un mensaje legible para el usuario.
+// - noAutorizado: mensaje por defecto para 401/403
+// - noEncontrado: mensaje por defecto para 404
+// Si el backend envía { error }, ese texto tiene prioridad.
+function mensajeDeError(err, { noAutorizado, noEncontrado } = {}) {
+  if (err.code === 'ECONNABORTED') {
+    return 'El servidor tardó demasiado en responder. Intente más tarde.';
+  }
+  if (err.code === 'ERR_NETWORK' || !err.response) {
+    return 'No se pudo conectar con el servidor. Verifica tu conexión e intenta de nuevo.';
+  }
+
+  const { status, data } = err.response;
+  const mensajeApi = data?.error;
+
+  if ((status === 401 || status === 403) && noAutorizado) return mensajeApi || noAutorizado;
+  if (status === 404 && noEncontrado) return mensajeApi || noEncontrado;
+  if (status >= 500) return mensajeApi || 'El servidor tuvo un problema. Intenta más tarde.';
+  return mensajeApi || 'Ocurrió un error inesperado. Intenta más tarde.';
+}
+
+/* ---------- Sesión ---------- */
 
 // Inicia sesión contra el backend y persiste el token + usuario en localStorage.
 // Devuelve { success, user, error } para que AuthContext lo consuma directamente.
@@ -37,21 +60,24 @@ export async function login(correo, password) {
 
     return { success: true, user };
   } catch (err) {
-    let error;
-    if (err.code === 'ECONNABORTED') {
-      error = 'El servidor tardó demasiado en responder. Intente más tarde.';
-    } else if (err.code === 'ERR_NETWORK' || !err.response) {
-      error = 'No se pudo conectar con el servidor. Verifica tu conexión e intenta de nuevo.';
-    } else if (err.response?.status === 401) {
-      error = err.response?.data?.error || 'Correo o contraseña incorrectos.';
-    } else if (err.response?.status >= 500) {
-      error = err.response?.data?.error || 'El servidor tuvo un problema. Intenta más tarde.';
-    } else {
-      error = err.response?.data?.error || 'Ocurrió un error inesperado. Intenta más tarde.';
-    }
-    return { success: false, error };
+    return {
+      success: false,
+      error: mensajeDeError(err, { noAutorizado: 'Correo o contraseña incorrectos.' }),
+    };
   }
 }
+
+// Limpia la sesión guardada localmente
+export function logout() {
+  try {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  } catch (error) {
+    console.error('No se pudo limpiar la sesión de localStorage:', error);
+  }
+}
+
+/* ---------- Residentes (CU-04 / CU-05) ---------- */
 
 // Genera una contraseña temporal segura para asignarle al residente al darlo de alta.
 // El admin la comunica al residente fuera del sistema; no hay flujo de invitación por correo.
@@ -74,22 +100,12 @@ export async function crearResidente(correo, unidadId) {
       password: passwordTemporal,
       unidad_id: unidadId,
     });
-
     return { success: true, residente: response.data.residente, passwordTemporal };
   } catch (err) {
-    let error;
-    if (err.code === 'ECONNABORTED') {
-      error = 'El servidor tardó demasiado en responder. Intente más tarde.';
-    } else if (err.code === 'ERR_NETWORK' || !err.response) {
-      error = 'No se pudo conectar con el servidor. Verifica tu conexión e intenta de nuevo.';
-    } else if (err.response?.status === 401 || err.response?.status === 403) {
-      error = err.response?.data?.error || 'No tienes permiso para dar de alta residentes.';
-    } else if (err.response?.status >= 500) {
-      error = err.response?.data?.error || 'El servidor tuvo un problema. Intenta más tarde.';
-    } else {
-      error = err.response?.data?.error || 'Ocurrió un error inesperado. Intenta más tarde.';
-    }
-    return { success: false, error };
+    return {
+      success: false,
+      error: mensajeDeError(err, { noAutorizado: 'No tienes permiso para dar de alta residentes.' }),
+    };
   }
 }
 
@@ -101,19 +117,10 @@ export async function listarResidentes(soloActivos = true) {
     const response = await apiClient.get('/residentes', { params: { soloActivos } });
     return { success: true, residentes: response.data.residentes };
   } catch (err) {
-    let error;
-    if (err.code === 'ECONNABORTED') {
-      error = 'El servidor tardó demasiado en responder. Intente más tarde.';
-    } else if (err.code === 'ERR_NETWORK' || !err.response) {
-      error = 'No se pudo conectar con el servidor. Verifica tu conexión e intenta de nuevo.';
-    } else if (err.response?.status === 401 || err.response?.status === 403) {
-      error = err.response?.data?.error || 'No tienes permiso para ver los residentes.';
-    } else if (err.response?.status >= 500) {
-      error = err.response?.data?.error || 'El servidor tuvo un problema. Intenta más tarde.';
-    } else {
-      error = err.response?.data?.error || 'Ocurrió un error inesperado. Intenta más tarde.';
-    }
-    return { success: false, error };
+    return {
+      success: false,
+      error: mensajeDeError(err, { noAutorizado: 'No tienes permiso para ver los residentes.' }),
+    };
   }
 }
 
@@ -124,31 +131,44 @@ export async function darDeBajaResidente(id) {
     const response = await apiClient.patch(`/residentes/${id}/baja`);
     return { success: true, residente: response.data.residente, aviso: response.data.aviso };
   } catch (err) {
-    let error;
-    if (err.code === 'ECONNABORTED') {
-      error = 'El servidor tardó demasiado en responder. Intente más tarde.';
-    } else if (err.code === 'ERR_NETWORK' || !err.response) {
-      error = 'No se pudo conectar con el servidor. Verifica tu conexión e intenta de nuevo.';
-    } else if (err.response?.status === 404) {
-      error = err.response?.data?.error || 'El residente no existe.';
-    } else if (err.response?.status === 401 || err.response?.status === 403) {
-      error = err.response?.data?.error || 'No tienes permiso para dar de baja residentes.';
-    } else if (err.response?.status >= 500) {
-      error = err.response?.data?.error || 'El servidor tuvo un problema. Intenta más tarde.';
-    } else {
-      error = err.response?.data?.error || 'Ocurrió un error inesperado. Intenta más tarde.';
-    }
-    return { success: false, error };
+    return {
+      success: false,
+      error: mensajeDeError(err, {
+        noAutorizado: 'No tienes permiso para dar de baja residentes.',
+        noEncontrado: 'El residente no existe.',
+      }),
+    };
   }
 }
 
-// Limpia la sesión guardada localmente
-export function logout() {
+/* ---------- Incidencias (CU-08) ---------- */
+
+const ERRORES_INCIDENCIAS = {
+  noAutorizado: 'No tienes permiso para gestionar incidencias.',
+  noEncontrado: 'La incidencia no existe.',
+};
+
+// Lista las incidencias con estado "abierto". Se vuelve a filtrar en el cliente
+// para no depender de que el backend aplique el filtro.
+// Devuelve { success, incidencias, error }.
+export async function listarIncidenciasAbiertas() {
   try {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-  } catch (error) {
-    console.error('No se pudo limpiar la sesión de localStorage:', error);
+    const response = await apiClient.get('/incidencias', { params: { estado: 'abierto' } });
+    const incidencias = (response.data.incidencias ?? []).filter((i) => i.estado === 'abierto');
+    return { success: true, incidencias };
+  } catch (err) {
+    return { success: false, error: mensajeDeError(err, ERRORES_INCIDENCIAS) };
+  }
+}
+
+// Asigna o reasigna el responsable de una incidencia (incidencias.responsable es texto).
+// Devuelve { success, incidencia, error }.
+export async function asignarResponsable(id, responsable) {
+  try {
+    const response = await apiClient.patch(`/incidencias/${id}/asignar`, { responsable });
+    return { success: true, incidencia: response.data.incidencia };
+  } catch (err) {
+    return { success: false, error: mensajeDeError(err, ERRORES_INCIDENCIAS) };
   }
 }
 

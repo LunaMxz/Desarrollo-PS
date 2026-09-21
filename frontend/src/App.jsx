@@ -4,6 +4,7 @@ import Login from './pages/LoginPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AltaResidentePage from './pages/AltaResidentePage';
 import BajaResidentePage from './pages/BajaResidentePage';
+import IncidenciasAbiertasPage from './pages/IncidenciasAbiertasPage';
 import ResidenteHomePage from './pages/ResidenteHomePage';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -31,6 +32,7 @@ export default function App() {
             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
             <Route path="/admin/residentes/alta" element={<AltaResidentePage />} />
             <Route path="/admin/residentes/baja" element={<BajaResidentePage />} />
+            <Route path="/admin/incidencias" element={<IncidenciasAbiertasPage />} />
           </Route>
 
           {/* Redirección por defecto */}

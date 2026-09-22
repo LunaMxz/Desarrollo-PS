@@ -23,4 +23,4 @@ Proyecto de la materia Desarrollo de Proyectos de Software (agosto-diciembre 202
 
 ## Sprint actual
 
-Ver el tablero de Sprint 1 en Planner (canal de Teams del equipo).
+Ver el tablero de Sprint 2 en Planner (canal de Teams del equipo).

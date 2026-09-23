@@ -26,3 +26,19 @@ export async function findById(id) {
     );
     return result.rows[0] || null;
 }
+
+// CU-08: Modificacion por MV
+export async function listar({ estado } = {}) {
+  const params = [];
+  let query = `
+    SELECT id, residente_id, titulo, descripcion, ubicacion,
+           estado, responsable, fecha_creacion, fecha_resolucion
+    FROM incidencias`;
+  if (estado) {
+    params.push(estado);
+    query += ` WHERE estado = $1`;
+  }
+  query += ` ORDER BY fecha_creacion DESC`;
+  const result = await pool.query(query, params);
+  return result.rows;
+}

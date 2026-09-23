@@ -1,5 +1,17 @@
-import { findById, actualizarResponsableYEstado, } from '../repositories/incidencias.repository.js';
+import { findById, actualizarResponsableYEstado, listar } from '../repositories/incidencias.repository.js';
 const ESTADOS_VALIDOS = ['abierto', 'en_proceso', 'resuelto'];
+
+// CU-08: lista incidencias, opcionalmente filtradas por estado, Modificado 
+// por mv dudas por teams 
+export async function listarIncidencias({ estado } = {}) {
+  if (estado && !ESTADOS_VALIDOS.includes(estado)) {
+    const error = new Error('Estado inválido. Debe ser "abierto", "en_proceso" o "resuelto"');
+    error.status = 400;
+    throw error;
+  }
+  return listar({ estado });
+}
+
 export async function obtenerIncidenciaOError(id) {
     if (id === undefined || id === null || Number.isNaN(Number(id))) {
         const error = new Error('Id de incidencia inválido');

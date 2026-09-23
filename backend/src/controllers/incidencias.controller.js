@@ -1,4 +1,16 @@
-import { asignarResponsable } from '../services/incidencias.service.js';
+import { listarIncidencias, asignarResponsable } from '../services/incidencias.service.js';
+
+// CU-08: GET /incidencias?estado=abierto 
+// mv dudas por teams 
+export async function listarIncidenciasHandler(req, res, next) {
+  try {
+    const incidencias = await listarIncidencias({ estado: req.query.estado });
+    res.json({ incidencias });
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function asignarResponsableHandler(req, res, next) {
     try {
         const { incidencia, reasignada, responsableAnterior } =

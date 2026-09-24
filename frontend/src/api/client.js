@@ -141,7 +141,7 @@ export async function darDeBajaResidente(id) {
   }
 }
 
-/* ---------- Incidencias (CU-08) ---------- */
+/* ---------- Incidencias (CU-08 / CU-09) ---------- */
 
 const ERRORES_INCIDENCIAS = {
   noAutorizado: 'No tienes permiso para gestionar incidencias.',
@@ -161,11 +161,37 @@ export async function listarIncidenciasAbiertas() {
   }
 }
 
+// Lista las incidencias pendientes: las "abierto" y las "en_proceso" (ya tienen responsable
+// pero aún no se resuelven). El backend solo filtra por un estado a la vez, así que se pide
+// todo y se filtra en el cliente. Devuelve { success, incidencias, error }.
+export async function listarIncidenciasPendientes() {
+  try {
+    const response = await apiClient.get('/incidencias');
+    const incidencias = (response.data.incidencias ?? []).filter(
+      (i) => i.estado === 'abierto' || i.estado === 'en_proceso'
+    );
+    return { success: true, incidencias };
+  } catch (err) {
+    return { success: false, error: mensajeDeError(err, ERRORES_INCIDENCIAS) };
+  }
+}
+
 // Asigna o reasigna el responsable de una incidencia (incidencias.responsable es texto).
 // Devuelve { success, incidencia, error }.
 export async function asignarResponsable(id, responsable) {
   try {
     const response = await apiClient.patch(`/incidencias/${id}/asignar`, { responsable });
+    return { success: true, incidencia: response.data.incidencia };
+  } catch (err) {
+    return { success: false, error: mensajeDeError(err, ERRORES_INCIDENCIAS) };
+  }
+}
+
+// Marca una incidencia como resuelta (CU-09).
+// Devuelve { success, incidencia, error }.
+export async function resolverIncidencia(id) {
+  try {
+    const response = await apiClient.patch(`/incidencias/${id}/resolver`);
     return { success: true, incidencia: response.data.incidencia };
   } catch (err) {
     return { success: false, error: mensajeDeError(err, ERRORES_INCIDENCIAS) };

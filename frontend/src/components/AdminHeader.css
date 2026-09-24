@@ -4,18 +4,34 @@
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  padding: 18px 32px;
-  background: rgba(19, 28, 49, 0.7);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(195, 163, 124, 0.2);
+  padding: 24px 32px;
+  position: relative;
+  z-index: 5;
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: rgba(11, 18, 32, 0.65);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border-bottom: 1px solid rgba(195, 163, 124, 0.18);
 }
 
 .admin-header__izquierda {
+  min-width: 0;
+  flex: 1 1 240px;
+}
+
+.admin-header__eyebrow {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--terracotta-bright, #E08D5B);
+}
+
+.admin-header__acciones {
   display: flex;
   align-items: center;
-  gap: 20px;
-  min-width: 0;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .admin-header__volver {
@@ -37,19 +53,19 @@
 
 .admin-header__titulo {
   font-family: 'Fraunces', Georgia, serif;
-  font-weight: 600;
-  font-size: 20px;
+  font-weight: 500;
+  font-size: 26px;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
   margin: 0;
   color: #F5EFE6;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .admin-header__logout {
   flex-shrink: 0;
-  border: 1.5px solid rgba(195, 163, 124, 0.35);
-  border-radius: 8px;
+  border: 1px solid rgba(195, 163, 124, 0.35);
+  border-radius: 10px;
   padding: 9px 16px;
   background: transparent;
   color: #F5EFE6;
@@ -57,10 +73,21 @@
   font-weight: 600;
   font-size: 13px;
   cursor: pointer;
-  transition: all 150ms ease;
+  transition: background-color 200ms ease, border-color 200ms ease;
 }
 
 .admin-header__logout:hover {
-  background: rgba(191, 107, 70, 0.18);
-  border-color: #BF6B46;
+  background: rgba(201, 122, 74, 0.16);
+  border-color: rgba(224, 141, 91, 0.6);
+}
+
+.admin-header__volver:focus-visible,
+.admin-header__logout:focus-visible {
+  outline: 2px solid var(--terracotta-bright, #E08D5B);
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .admin-header { padding: 20px; }
+  .admin-header__acciones { gap: 12px; }
 }

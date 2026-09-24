@@ -1,16 +1,130 @@
+/* Variables base y contenedor principal */
 .admin-dashboard-screen {
   --navy: #131C31;
   --charcoal: #383E45;
-  --terracotta: #BF6B46;
+  --terracotta: #C97A4A;
+  --terracotta-bright: #E08D5B;
   --beige: #C3A37C;
   --crema: #F5EFE6;
 
+  position: relative;
   min-height: 100vh;
+  overflow-x: hidden;
   font-family: 'Inter', -apple-system, sans-serif;
-  background: radial-gradient(circle at 30% 0%, #212A3E 0%, var(--navy) 65%);
+  color: var(--crema);
+  background: var(--navy);
 }
 
+/* Cielo dinámico según CSS variables */
+.fondo-cielo {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(180deg, var(--sky-top, #080d18) 0%, var(--sky-bot, #101a2c) 100%);
+  transition: background 1.2s ease;
+}
+
+/* Skyline fondo */
+.fondo-skyline-back {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  height: 26vh;
+  min-height: 160px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  filter: blur(2.5px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.bloque-back {
+  flex: 1 1 0;
+  background: rgba(6, 9, 15, 0.7);
+  border-radius: 3px 3px 0 0;
+}
+
+/* Skyline frontal */
+.fondo-skyline {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1.5;
+  height: 34vh;
+  min-height: 220px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  padding: 0 2vw;
+  filter: blur(0.3px);
+  pointer-events: none;
+}
+
+/* Torres frontales */
+.torre {
+  flex: 1 1 0;
+  display: grid;
+  gap: 4px;
+  padding: 8px 6px;
+  background: #070a10;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Ventanas ajustadas a cuadrícula */
+.ventana {
+  width: 100%;
+  height: 100%;
+  border-radius: 1.5px;
+  background: rgba(255, 255, 255, 0.035);
+  transition: background 0.5s ease, box-shadow 0.5s ease;
+}
+
+.ventana.lit {
+  background: linear-gradient(160deg, var(--terracotta-bright), var(--beige));
+  box-shadow: 0 0 6px rgba(224, 141, 91, 0.6);
+}
+
+/* Capas de contraste y textura */
+.fondo-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(11,18,32,0.7) 0%, rgba(11,18,32,0.3) 35%, rgba(11,18,32,0.6) 65%, rgba(11,18,32,0.95) 100%);
+}
+
+.fondo-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  transition: background 1.2s ease;
+  mix-blend-mode: screen;
+}
+
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Contenido de la página de administración */
 .admin-dashboard-contenido {
+  position: relative;
+  z-index: 4;
   max-width: 960px;
   margin: 0 auto;
   padding: 40px 24px 64px;
@@ -25,6 +139,7 @@
   font-size: 20px;
   margin: 0 0 16px;
   color: var(--crema);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
 .admin-dashboard-grid {
@@ -33,23 +148,25 @@
   gap: 16px;
 }
 
+/* Tarjetas con efecto Frosted Glass */
 .admin-dashboard-tarjeta {
   position: relative;
   display: block;
   text-decoration: none;
-  background: rgba(19, 28, 49, 0.55);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(195, 163, 124, 0.25);
+  background: linear-gradient(150deg, rgba(18, 26, 43, 0.82) 0%, rgba(11, 18, 32, 0.92) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(195, 163, 124, 0.22);
   border-radius: 16px;
   padding: 22px;
-  transition: all 200ms ease;
+  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.55);
+  transition: all 260ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 a.admin-dashboard-tarjeta:hover {
-  transform: translateY(-3px);
-  border-color: var(--terracotta);
-  box-shadow: 0 12px 24px rgba(191, 107, 70, 0.2);
+  transform: translateY(-4px);
+  border-color: rgba(224, 141, 91, 0.5);
+  box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.65), 0 0 24px rgba(201, 122, 74, 0.2);
 }
 
 .admin-dashboard-tarjeta h3 {
@@ -64,6 +181,7 @@ a.admin-dashboard-tarjeta:hover {
   font-size: 13px;
   line-height: 1.5;
   color: var(--beige);
+  opacity: 0.88;
 }
 
 .admin-dashboard-tarjeta--deshabilitada {

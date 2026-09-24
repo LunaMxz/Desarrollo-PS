@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './LoginPage.css';
+import { obtenerCieloParaHora, obtenerProporcionLuces } from '../utils/coloresHorario';
 
 // Tres torres de apartamentos con distinta altura y separación
 const EDIFICIOS = [
@@ -26,7 +27,7 @@ function construirEdificio({ x, ancho, pisos, seed }) {
         x: x + 14 + v * ((ancho - 28) / numVentanas),
         y: y + 14,
         acero: idx % 6 === 0,
-        delay: `${((idx * 3) % 16) * 0.35}s`,
+        umbral: ((idx * 37) % 100) / 100,
       });
     }
     pisosArr.push({
@@ -43,6 +44,22 @@ function construirEdificio({ x, ancho, pisos, seed }) {
 }
 
 export default function LoginPage() {
+  const [horaActual, setHoraActual] = useState(() => {
+    const ahora = new Date();
+    return ahora.getHours() + ahora.getMinutes() / 60;
+  });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const ahora = new Date();
+      setHoraActual(ahora.getHours() + ahora.getMinutes() / 60);
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const cielo = obtenerCieloParaHora(horaActual);
+  // Mantener algunas ventanas iluminadas también durante el día en el login.
+  const proporcionLuces = Math.max(0.18, obtenerProporcionLuces(horaActual));
   const [correo, setCorreo] = useState('');
   const [password, setPassword] = useState('');
   const [mostrarPassword, setMostrarPassword] = useState(false);
@@ -98,13 +115,12 @@ export default function LoginPage() {
   return (
     <div className="login-screen">
       {/* Fondo ilustrado */}
-      <div className="fondo">
+      <div className="login-fondo">
         <svg viewBox="0 0 800 900" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
           <defs>
             <linearGradient id="cieloGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#131C31" />
-              <stop offset="60%" stopColor="#212A3E" />
-              <stop offset="100%" stopColor="#383E45" />
+              <stop offset="0%" stopColor={cielo.top} />
+              <stop offset="100%" stopColor={cielo.bot} />
             </linearGradient>
           </defs>
           <rect width="800" height="900" fill="url(#cieloGrad)" />
@@ -114,7 +130,7 @@ export default function LoginPage() {
               {construirEdificio(ed).map((piso) => (
                 <g key={piso.key}>
                   <rect
-                    className={`bloque${ed.medio ? ' bloque--medio' : ''}`}
+                    className={`login-bloque${ed.medio ? ' login-bloque--medio' : ''}`}
                     x={piso.x}
                     y={piso.y}
                     width={piso.ancho}
@@ -122,7 +138,7 @@ export default function LoginPage() {
                     style={{ animationDelay: piso.delay }}
                   />
                   <rect
-                    className="balcon"
+                    className="login-balcon"
                     x={piso.x + 6}
                     y={piso.y + 8}
                     width={piso.ancho - 12}
@@ -131,12 +147,16 @@ export default function LoginPage() {
                   {piso.ventanas.map((v, i) => (
                     <rect
                       key={i}
-                      className={`ventana${v.acero ? ' ventana--acero' : ''}`}
+                      className={`login-ventana${v.acero ? ' login-ventana--acero' : ''}${v.umbral < proporcionLuces ? ' login-ventana--encendida' : ''}`}
                       x={v.x}
                       y={v.y}
                       width="14"
                       height="18"
-                      style={{ animationDelay: v.delay }}
+                      style={{
+                        opacity: v.umbral < proporcionLuces ? 0.85 : 0.06,
+                        animationDelay: `${-v.umbral * 18}s`,
+                        animationDuration: `${8 + v.umbral * 10}s`,
+                      }}
                     />
                   ))}
                 </g>
@@ -146,11 +166,11 @@ export default function LoginPage() {
         </svg>
       </div>
 
-      <div className="fondo__scrim" aria-hidden="true" />
+      <div className="login-fondo__scrim" aria-hidden="true" />
 
       {/* Marca inferior izquierda */}
-      <div className="fondo__marca">
-        <p className="fondo__eyebrow">Portal de residentes</p>
+      <div className="login-fondo__marca">
+        <p className="login-fondo__eyebrow">Portal de residentes</p>
         <h2>Tu condominio, siempre a la mano</h2>
       </div>
 
@@ -209,7 +229,7 @@ export default function LoginPage() {
             )}
 
             <button type="submit" className="login-form__submit" disabled={cargando}>
-              {cargando && <span className="spinner" aria-hidden="true" />}
+              {cargando && <span className="login-spinner" aria-hidden="true" />}
               {cargando ? 'Ingresando…' : 'Ingresar'}
             </button>
           </form>

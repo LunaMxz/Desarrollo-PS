@@ -5,6 +5,7 @@ import AdminDashboardPage from './pages/AdminDashboardPage';
 import AltaResidentePage from './pages/AltaResidentePage';
 import BajaResidentePage from './pages/BajaResidentePage';
 import IncidenciasAbiertasPage from './pages/IncidenciasAbiertasPage';
+import ReportarIncidenciaPage from './pages/ReportarIncidenciaPage';
 import ResidenteHomePage from './pages/ResidenteHomePage';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -25,6 +26,7 @@ export default function App() {
           {/* Rutas Privadas */}
           <Route element={<ProtectedRoute />}>
             <Route path="/residentes" element={<ResidenteHomePage />} />
+            <Route path="/incidencias/reportar" element={<ReportarIncidenciaPage />} />
           </Route>
 
           {/* Rutas Privadas restringidas por Rol */}

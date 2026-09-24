@@ -22,6 +22,8 @@ html, body {
 
   position: relative;
   min-height: 100vh;
+  min-height: 100svh;
+  padding: 32px 0;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -37,43 +39,53 @@ html, body {
 }
 
 /* ---------- Fondo SVG y Skyline ---------- */
-.fondo {
+.login-fondo {
   position: absolute;
   inset: 0;
   z-index: 0;
 }
 
-.fondo svg {
+.login-fondo svg {
   width: 100%;
   height: 100%;
   display: block;
 }
 
-.bloque {
+.login-bloque {
   fill: var(--charcoal);
   opacity: 0;
   transform-origin: bottom;
   animation: subirBloque 1000ms cubic-bezier(0.22, 0.9, 0.32, 1) forwards;
 }
 
-.bloque--medio {
+.login-bloque--medio {
   fill: #272C32;
 }
 
-.balcon {
+.login-balcon {
   fill: none;
   stroke: rgba(195, 163, 124, 0.2);
   stroke-width: 2;
 }
 
-.ventana {
+.login-ventana {
   fill: var(--beige);
   opacity: 0;
-  animation: encender 6s ease-in-out infinite;
+  transition: opacity 1.2s ease;
 }
 
-.ventana--acero {
+.login-ventana--acero {
   fill: var(--terracotta);
+}
+
+.login-ventana--encendida {
+  animation: login-luz 12s ease-in-out infinite;
+}
+
+@keyframes login-luz {
+  0%, 100% { opacity: 0.85; }
+  35%, 55% { opacity: 0.25; }
+  75% { opacity: 0.95; }
 }
 
 @keyframes subirBloque {
@@ -81,16 +93,8 @@ html, body {
   to { opacity: 1; transform: translateY(0) scaleY(1); }
 }
 
-@keyframes encender {
-  0%, 100% { opacity: 0.15; }
-  40% { opacity: 0.15; }
-  52% { opacity: 0.9; }
-  82% { opacity: 0.9; }
-  94% { opacity: 0.15; }
-}
-
 /* Scrim suave que respeta las animaciones de fondo */
-.fondo__scrim {
+.login-fondo__scrim {
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -100,9 +104,15 @@ html, body {
     rgba(19, 28, 49, 0.75) 100%
   );
   pointer-events: none;
+  animation: login-ambiente 16s ease-in-out infinite;
 }
 
-.fondo__marca {
+@keyframes login-ambiente {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.72; }
+}
+
+.login-fondo__marca {
   position: absolute;
   left: 56px;
   bottom: 52px;
@@ -116,7 +126,7 @@ html, body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.fondo__eyebrow {
+.login-fondo__eyebrow {
   margin: 0 0 8px;
   font-size: 13px;
   color: var(--beige);
@@ -125,7 +135,7 @@ html, body {
   font-weight: 600;
 }
 
-.fondo__marca h2 {
+.login-fondo__marca h2 {
   font-family: 'Fraunces', Georgia, serif;
   font-weight: 500;
   font-size: 32px;
@@ -136,7 +146,7 @@ html, body {
 }
 
 @media (max-width: 720px) {
-  .fondo__marca {
+  .login-fondo__marca {
     display: none;
   }
 }
@@ -202,6 +212,22 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.login-card__title,
+.login-card__subtitle,
+.login-form__field {
+  animation: login-revelar 650ms ease-out both;
+}
+
+.login-card__title { animation-delay: 450ms; }
+.login-card__subtitle { animation-delay: 550ms; }
+.login-form__field:nth-child(1) { animation-delay: 650ms; }
+.login-form__field:nth-child(2) { animation-delay: 750ms; }
+
+@keyframes login-revelar {
+  from { opacity: 0; transform: translateY(10px); }
+  to { transform: translateY(0); }
 }
 
 .login-form__field {
@@ -312,4 +338,34 @@ html, body {
 .login-form__toggle-password:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+.login-form__submit:disabled {
+  cursor: wait;
+  opacity: 0.65;
+  transform: none;
+}
+
+.login-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: login-spin 0.8s linear infinite;
+}
+
+@keyframes login-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 420px) {
+  .login-card { padding: 32px 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-screen *, .login-screen *::before, .login-screen *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .login-bloque, .login-fondo__marca, .login-card { opacity: 1; }
 }

@@ -2,7 +2,7 @@ import { Router } from 'express';
 import healthRoutes from './health.routes.js';
 import authRoutes from './auth.routes.js';               // <- CU-01
 import residentesRoutes from './residentes.routes.js';   // <- CU-04 / CU-05
-import incidenciasRoutes from './incidencias.routes.js';
+import incidenciasRoutes from './incidencias.routes.js'; // <- CU-03 / CU-08 / CU-09
 const router = Router();
 router.use('/health', healthRoutes);
 router.use('/auth', authRoutes);

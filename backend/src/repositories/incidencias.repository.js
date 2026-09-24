@@ -27,6 +27,31 @@ export async function findById(id) {
     return result.rows[0] || null;
 }
 
+// CU-09: actualiza el estado y marca la fecha de resolución
+export async function resolverIncidenciaInDB(id) {
+    const result = await pool.query(
+        `UPDATE incidencias
+        SET estado = 'resuelto', fecha_resolucion = NOW()
+        WHERE id = $1
+        RETURNING id, residente_id, titulo, descripcion, ubicacion,
+        estado, responsable, fecha_creacion, fecha_resolucion`,
+        [id]
+    );
+    return result.rows[0] || null;
+}
+
+// CU-03: inserta una incidencia nueva; siempre inicia en estado 'abierto'
+export async function insertarIncidencia({ residente_id, titulo, descripcion, ubicacion }) {
+    const result = await pool.query(
+        `INSERT INTO incidencias (residente_id, titulo, descripcion, ubicacion, estado)
+        VALUES ($1, $2, $3, $4, 'abierto')
+        RETURNING id, residente_id, titulo, descripcion, ubicacion,
+        estado, responsable, fecha_creacion, fecha_resolucion`,
+        [residente_id, titulo, descripcion, ubicacion ?? null]
+    );
+    return result.rows[0];
+}
+
 // CU-08: Modificacion por MV
 export async function listar({ estado } = {}) {
   const params = [];

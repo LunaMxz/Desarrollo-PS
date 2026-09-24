@@ -1,4 +1,4 @@
-import { findById, actualizarResponsableYEstado, listar } from '../repositories/incidencias.repository.js';
+import { findById, actualizarResponsableYEstado, listar, resolverIncidenciaInDB } from '../repositories/incidencias.repository.js';
 const ESTADOS_VALIDOS = ['abierto', 'en_proceso', 'resuelto'];
 
 // CU-08: lista incidencias, opcionalmente filtradas por estado, Modificado 
@@ -67,4 +67,24 @@ export async function asignarResponsable(id, responsable) {
     const reasignada = Boolean(responsableAnterior);
     const actualizada = await actualizarIncidencia(id, {responsable: responsable.trim(), estado: 'en_proceso',});
     return { incidencia: actualizada, reasignada, responsableAnterior };
+}
+
+// CU-09: marca una incidencia como resuelta (fecha_resolucion la pone el repositorio)
+export async function resolverIncidencia(id) {
+    const incidencia = await obtenerIncidenciaOError(id);
+    if (incidencia.estado === 'resuelto') {
+        const error = new Error('La incidencia ya está resuelta');
+        error.status = 400;
+        throw error;
+    }
+    // Bloquear resolución si no tiene responsable asignado
+    if (!incidencia.responsable) {
+        const error = new Error('No se puede resolver una incidencia sin un responsable asignado');
+        error.status = 400;
+        throw error;
+    }
+    const actualizada = await resolverIncidenciaInDB(id);
+    // Notificación temporal al residente
+    console.log(`[Notificación] Incidencia ${id} resuelta. Notificando al residente ID: ${incidencia.residente_id}`);
+    return { message: 'Incidencia resuelta exitosamente', incidencia: actualizada };
 }

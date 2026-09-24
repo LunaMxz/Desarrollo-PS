@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useState, useMemo } from 'react';
-import { listarIncidenciasAbiertas, asignarResponsable } from '../api/client';
+import {
+  listarIncidenciasPendientes,
+  asignarResponsable,
+  resolverIncidencia,
+} from '../api/client';
 import AdminHeader from '../components/AdminHeader';
 import { RESPONSABLES } from '../constants/responsables';
 import './IncidenciasAbiertasPage.css';
@@ -77,12 +81,27 @@ const formatearFecha = (valor) => {
     : fecha.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
 };
 
-function IncidenciaCard({ incidencia, valor, asignando, bloqueado, error, onCambio, onAsignar }) {
+// Estados que siguen apareciendo en esta vista (una resuelta sale de la lista)
+const ESTADOS_PENDIENTES = ['abierto', 'en_proceso'];
+
+function IncidenciaCard({
+  incidencia,
+  valor,
+  asignando,
+  resolviendo,
+  bloqueado,
+  error,
+  onCambio,
+  onAsignar,
+  onResolver,
+}) {
   const opciones =
     incidencia.responsable && !RESPONSABLES.includes(incidencia.responsable)
       ? [incidencia.responsable, ...RESPONSABLES]
       : RESPONSABLES;
   const sinCambios = !valor || valor === incidencia.responsable;
+  // Se cuenta el responsable ya guardado, no el que se eligió en el select sin guardar
+  const sinResponsable = !incidencia.responsable;
   const idCampo = `responsable-${incidencia.id}`;
 
   return (
@@ -133,6 +152,17 @@ function IncidenciaCard({ incidencia, valor, asignando, bloqueado, error, onCamb
           {asignando ? 'Guardando…' : incidencia.responsable ? 'Reasignar' : 'Asignar'}
         </button>
 
+        <button
+          type="button"
+          className="incidencia-card__boton incidencia-card__boton--resolver"
+          onClick={() => onResolver(incidencia)}
+          disabled={sinResponsable || bloqueado}
+          title={sinResponsable ? 'Asigna un responsable para poder resolver' : undefined}
+        >
+          {resolviendo && <span className="incidencias-spinner" aria-hidden="true" />}
+          {resolviendo ? 'Resolviendo…' : 'Marcar como resuelto'}
+        </button>
+
         {error && (
           <p className="incidencia-card__error" role="alert">
             {error}
@@ -150,6 +180,12 @@ function ModalAsignacion({ confirmacion, onCerrar }) {
     return () => window.removeEventListener('keydown', alPresionar);
   }, [onCerrar]);
 
+  const titulo = confirmacion.esResolucion
+    ? 'Incidencia resuelta'
+    : confirmacion.esReasignacion
+      ? 'Responsable reasignado'
+      : 'Responsable asignado';
+
   return (
     <div className="incidencias-modal-overlay" role="presentation" onClick={onCerrar}>
       <div
@@ -161,10 +197,17 @@ function ModalAsignacion({ confirmacion, onCerrar }) {
       >
         <div className="incidencias-modal__icono" aria-hidden="true">✓</div>
         <h2 id="modal-asignacion-titulo" className="incidencias-modal__titulo">
-          {confirmacion.esReasignacion ? 'Responsable reasignado' : 'Responsable asignado'}
+          {titulo}
         </h2>
         <p className="incidencias-modal__texto">
-          «{confirmacion.titulo}» ahora está a cargo de <strong>{confirmacion.responsable}</strong>.
+          {confirmacion.esResolucion ? (
+            <>«{confirmacion.titulo}» se marcó como resuelta.</>
+          ) : (
+            <>
+              «{confirmacion.titulo}» ahora está a cargo de{' '}
+              <strong>{confirmacion.responsable}</strong>.
+            </>
+          )}
         </p>
         <button type="button" className="incidencias-modal__boton" onClick={onCerrar} autoFocus>
           Entendido
@@ -181,6 +224,7 @@ export default function IncidenciasAbiertasPage() {
 
   const [seleccion, setSeleccion] = useState({});
   const [asignandoId, setAsignandoId] = useState(null);
+  const [resolviendoId, setResolviendoId] = useState(null);
   const [erroresPorId, setErroresPorId] = useState({});
   const [confirmacion, setConfirmacion] = useState(null);
 
@@ -213,7 +257,7 @@ export default function IncidenciasAbiertasPage() {
     setCargando(true);
     setErrorLista('');
 
-    const result = await listarIncidenciasAbiertas();
+    const result = await listarIncidenciasPendientes();
     if (result.success) {
       setIncidencias(result.incidencias);
     } else {
@@ -228,6 +272,15 @@ export default function IncidenciasAbiertasPage() {
 
   const cerrarModal = useCallback(() => setConfirmacion(null), []);
 
+  // Mientras se asigna o se resuelve algo, se bloquean los controles de todas las tarjetas
+  const ocupado = asignandoId !== null || resolviendoId !== null;
+
+  const quitarSeleccion = (id) =>
+    setSeleccion((prev) => {
+      const { [id]: _descartado, ...resto } = prev;
+      return resto;
+    });
+
   const handleCambio = (id, valor) => {
     setSeleccion((prev) => ({ ...prev, [id]: valor }));
     setErroresPorId((prev) => ({ ...prev, [id]: '' }));
@@ -235,7 +288,7 @@ export default function IncidenciasAbiertasPage() {
 
   const handleAsignar = async (incidencia) => {
     const responsable = seleccion[incidencia.id] ?? incidencia.responsable ?? '';
-    if (!responsable || responsable === incidencia.responsable || asignandoId !== null) return;
+    if (!responsable || responsable === incidencia.responsable || ocupado) return;
 
     setAsignandoId(incidencia.id);
     setErroresPorId((prev) => ({ ...prev, [incidencia.id]: '' }));
@@ -245,15 +298,14 @@ export default function IncidenciasAbiertasPage() {
     if (result.success) {
       const actualizada = { ...incidencia, responsable, ...result.incidencia };
 
+      // El backend pasa la incidencia a "en_proceso" al asignar: sigue en la lista,
+      // ahora con responsable, y ya se puede marcar como resuelta.
       setIncidencias((prev) =>
-        actualizada.estado === 'abierto'
+        ESTADOS_PENDIENTES.includes(actualizada.estado)
           ? prev.map((i) => (i.id === incidencia.id ? actualizada : i))
           : prev.filter((i) => i.id !== incidencia.id)
       );
-      setSeleccion((prev) => {
-        const { [incidencia.id]: _descartado, ...resto } = prev;
-        return resto;
-      });
+      quitarSeleccion(incidencia.id);
       setConfirmacion({
         titulo: incidencia.titulo,
         responsable,
@@ -264,6 +316,30 @@ export default function IncidenciasAbiertasPage() {
     }
 
     setAsignandoId(null);
+  };
+
+  const handleResolver = async (incidencia) => {
+    // Sin responsable guardado no se puede resolver
+    if (!incidencia.responsable || ocupado) return;
+
+    setResolviendoId(incidencia.id);
+    setErroresPorId((prev) => ({ ...prev, [incidencia.id]: '' }));
+
+    const result = await resolverIncidencia(incidencia.id);
+
+    if (result.success) {
+      // Ya no está abierta ni en proceso: sale de esta vista
+      setIncidencias((prev) => prev.filter((i) => i.id !== incidencia.id));
+      quitarSeleccion(incidencia.id);
+      setConfirmacion({
+        titulo: incidencia.titulo,
+        esResolucion: true,
+      });
+    } else {
+      setErroresPorId((prev) => ({ ...prev, [incidencia.id]: result.error }));
+    }
+
+    setResolviendoId(null);
   };
 
   const hayLista = !cargando && !errorLista && incidencias.length > 0;
@@ -326,7 +402,8 @@ export default function IncidenciasAbiertasPage() {
       <main className="incidencias-panel">
         <h1 className="incidencias-panel__title">Incidencias abiertas</h1>
         <p className="incidencias-panel__subtitle">
-          Asigna o reasigna un responsable a cada reporte pendiente
+          Asigna o reasigna un responsable a cada reporte pendiente y márcalo como resuelto al
+          terminar
         </p>
 
         {cargando && <p className="incidencias-panel__estado">Cargando incidencias…</p>}
@@ -341,7 +418,7 @@ export default function IncidenciasAbiertasPage() {
         )}
 
         {!cargando && !errorLista && incidencias.length === 0 && (
-          <p className="incidencias-panel__estado">No hay incidencias abiertas.</p>
+          <p className="incidencias-panel__estado">No hay incidencias pendientes.</p>
         )}
 
         {hayLista && (
@@ -352,10 +429,12 @@ export default function IncidenciasAbiertasPage() {
                 incidencia={incidencia}
                 valor={seleccion[incidencia.id] ?? incidencia.responsable ?? ''}
                 asignando={asignandoId === incidencia.id}
-                bloqueado={asignandoId !== null}
+                resolviendo={resolviendoId === incidencia.id}
+                bloqueado={ocupado}
                 error={erroresPorId[incidencia.id]}
                 onCambio={handleCambio}
                 onAsignar={handleAsignar}
+                onResolver={handleResolver}
               />
             ))}
           </ul>

@@ -452,3 +452,16 @@ to { opacity: 1; transform: translateY(0) scale(1); }
 animation: none;
 }
 }
+/* ---------- Botón "Marcar como resuelto" (CU-09) ---------- */
+.incidencia-card__boton--resolver {
+background: transparent;
+border: 1.5px solid rgba(195, 163, 124, 0.45);
+padding: 9.5px 16px;
+color: var(--crema);
+}
+
+.incidencia-card__boton--resolver:hover:not(:disabled) {
+background: rgba(195, 163, 124, 0.12);
+border-color: var(--terracotta);
+box-shadow: 0 8px 18px rgba(191, 107, 70, 0.25);
+}

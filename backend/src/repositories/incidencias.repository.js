@@ -40,6 +40,18 @@ export async function resolverIncidenciaInDB(id) {
     return result.rows[0] || null;
 }
 
+// CU-03: inserta una incidencia nueva; siempre inicia en estado 'abierto'
+export async function insertarIncidencia({ residente_id, titulo, descripcion, ubicacion }) {
+    const result = await pool.query(
+        `INSERT INTO incidencias (residente_id, titulo, descripcion, ubicacion, estado)
+        VALUES ($1, $2, $3, $4, 'abierto')
+        RETURNING id, residente_id, titulo, descripcion, ubicacion,
+        estado, responsable, fecha_creacion, fecha_resolucion`,
+        [residente_id, titulo, descripcion, ubicacion ?? null]
+    );
+    return result.rows[0];
+}
+
 // CU-08: Modificacion por MV
 export async function listar({ estado } = {}) {
   const params = [];

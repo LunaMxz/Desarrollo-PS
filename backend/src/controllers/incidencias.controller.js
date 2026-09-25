@@ -1,4 +1,18 @@
-import { listarIncidencias, asignarResponsable, resolverIncidencia } from '../services/incidencias.service.js';
+import { listarIncidencias, asignarResponsable, resolverIncidencia, crearIncidencia } from '../services/incidencias.service.js';
+
+// CU-03: POST /incidencias
+export async function crearIncidenciaHandler(req, res, next) {
+    try {
+        const { titulo, descripcion, ubicacion } = req.body;
+        const incidencia = await crearIncidencia(req.user.id, { titulo, descripcion, ubicacion });
+        res.status(201).json({
+            message: 'Incidencia creada exitosamente',
+            incidencia,
+        });
+    } catch (err) {
+        next(err);
+    }
+}
 
 // CU-08: GET /incidencias?estado=abierto 
 // mv dudas por teams 

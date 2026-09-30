@@ -63,7 +63,10 @@ export async function listar({ estado } = {}) {
     params.push(estado);
     query += ` WHERE estado = $1`;
   }
-  query += ` ORDER BY fecha_creacion DESC`;
+  // El historial de resueltas se ordena por la resolución más reciente
+  query += estado === 'resuelto'
+    ? ` ORDER BY fecha_resolucion DESC NULLS LAST, fecha_creacion DESC`
+    : ` ORDER BY fecha_creacion DESC`;
   const result = await pool.query(query, params);
   return result.rows;
 }

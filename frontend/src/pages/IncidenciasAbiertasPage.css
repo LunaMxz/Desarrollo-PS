@@ -465,3 +465,125 @@ background: rgba(195, 163, 124, 0.12);
 border-color: var(--terracotta);
 box-shadow: 0 8px 18px rgba(191, 107, 70, 0.25);
 }
+
+/* ---------- Pestañas Pendientes / Historial ---------- */
+.incidencias-tabs {
+display: flex;
+gap: 8px;
+margin-bottom: 24px;
+border-bottom: 1px solid rgba(195, 163, 124, 0.25);
+}
+
+.incidencias-tabs__tab {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+padding: 10px 16px;
+margin-bottom: -1px;
+border: none;
+border-bottom: 2px solid transparent;
+background: transparent;
+color: var(--beige);
+font-family: inherit;
+font-weight: 600;
+font-size: 14px;
+cursor: pointer;
+transition: color 200ms ease, border-color 200ms ease;
+}
+
+.incidencias-tabs__tab:hover {
+color: var(--crema);
+}
+
+.incidencias-tabs__tab[aria-selected='true'] {
+color: var(--crema);
+border-bottom-color: var(--terracotta-bright);
+}
+
+.incidencias-tabs__tab:focus-visible {
+outline: 2px solid var(--terracotta-bright);
+outline-offset: 2px;
+border-radius: 6px;
+}
+
+.incidencias-tabs__contador {
+min-width: 22px;
+padding: 2px 7px;
+border-radius: 999px;
+background: rgba(195, 163, 124, 0.18);
+color: var(--crema);
+font-size: 12px;
+text-align: center;
+}
+
+.incidencias-tabs__tab[aria-selected='true'] .incidencias-tabs__contador {
+background: var(--terracotta);
+}
+
+/* ---------- Historial de incidencias resueltas (solo lectura) ---------- */
+.incidencias-busqueda {
+box-sizing: border-box;
+width: 100%;
+margin-bottom: 16px;
+padding: 10px 14px;
+border: 1px solid rgba(195, 163, 124, 0.35);
+border-radius: 10px;
+background: rgba(11, 18, 32, 0.75);
+color: var(--crema);
+font-family: inherit;
+font-size: 14px;
+}
+
+.incidencias-busqueda::placeholder {
+color: var(--beige);
+opacity: 0.7;
+}
+
+.incidencias-busqueda:focus-visible {
+outline: none;
+border-color: var(--terracotta-bright);
+}
+
+.incidencia-card--historial {
+grid-template-columns: 1fr 200px;
+}
+
+@media (max-width: 720px) {
+.incidencia-card--historial {
+grid-template-columns: 1fr;
+}
+}
+
+.incidencia-card__fechas dl {
+display: flex;
+flex-direction: column;
+gap: 10px;
+margin: 0 0 12px;
+}
+
+.incidencia-card__fechas dl div {
+display: flex;
+justify-content: space-between;
+gap: 12px;
+font-size: 13px;
+}
+
+.incidencia-card__fechas dt {
+color: var(--beige);
+}
+
+.incidencia-card__fechas dd {
+margin: 0;
+color: var(--crema);
+font-weight: 600;
+}
+
+.incidencia-card__duracion {
+margin: 0;
+padding: 6px 10px;
+border-radius: 8px;
+background: rgba(72, 187, 120, 0.15);
+color: #9AE6B4;
+font-size: 12px;
+font-weight: 600;
+}

@@ -176,6 +176,21 @@ export async function listarIncidenciasPendientes() {
   }
 }
 
+// Historial: incidencias ya resueltas, de la resuelta más reciente a la más antigua.
+// Se vuelve a filtrar y ordenar en el cliente para no depender del backend.
+// Devuelve { success, incidencias, error }.
+export async function listarIncidenciasResueltas() {
+  try {
+    const response = await apiClient.get('/incidencias', { params: { estado: 'resuelto' } });
+    const incidencias = (response.data.incidencias ?? [])
+      .filter((i) => i.estado === 'resuelto')
+      .sort((a, b) => new Date(b.fecha_resolucion) - new Date(a.fecha_resolucion));
+    return { success: true, incidencias };
+  } catch (err) {
+    return { success: false, error: mensajeDeError(err, ERRORES_INCIDENCIAS) };
+  }
+}
+
 // Asigna o reasigna el responsable de una incidencia (incidencias.responsable es texto).
 // Devuelve { success, incidencia, error }.
 export async function asignarResponsable(id, responsable) {

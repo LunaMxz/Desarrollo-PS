@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import {
   listarIncidenciasPendientes,
+  listarIncidenciasResueltas,
   asignarResponsable,
   resolverIncidencia,
 } from '../api/client';
@@ -83,6 +84,53 @@ const formatearFecha = (valor) => {
 
 // Estados que siguen apareciendo en esta vista (una resuelta sale de la lista)
 const ESTADOS_PENDIENTES = ['abierto', 'en_proceso'];
+
+const HORA_MS = 60 * 60 * 1000;
+
+// Tiempo que tardó en resolverse una incidencia, en texto ("en 3 horas", "en 2 días")
+function describirDuracion(inicio, fin) {
+  const ms = new Date(fin) - new Date(inicio);
+  if (Number.isNaN(ms) || ms < 0) return '';
+  const horas = Math.floor(ms / HORA_MS);
+  if (horas < 1) return 'en menos de una hora';
+  if (horas < 24) return `en ${horas} ${horas === 1 ? 'hora' : 'horas'}`;
+  const dias = Math.floor(horas / 24);
+  return `en ${dias} ${dias === 1 ? 'día' : 'días'}`;
+}
+
+// Tarjeta de solo lectura para el historial de incidencias resueltas
+function HistorialCard({ incidencia }) {
+  const duracion = describirDuracion(incidencia.fecha_creacion, incidencia.fecha_resolucion);
+
+  return (
+    <li className="incidencia-card incidencia-card--historial">
+      <div className="incidencia-card__info">
+        <h2 className="incidencia-card__titulo">{incidencia.titulo}</h2>
+        {incidencia.descripcion && (
+          <p className="incidencia-card__descripcion">{incidencia.descripcion}</p>
+        )}
+        <p className="incidencia-card__meta">📍 {incidencia.ubicacion || 'Sin ubicación'}</p>
+        <p className="incidencia-card__actual">
+          Atendida por: {incidencia.responsable || 'Sin responsable registrado'}
+        </p>
+      </div>
+
+      <div className="incidencia-card__fechas">
+        <dl>
+          <div>
+            <dt>Reportada</dt>
+            <dd>{formatearFecha(incidencia.fecha_creacion) || '—'}</dd>
+          </div>
+          <div>
+            <dt>Resuelta</dt>
+            <dd>{formatearFecha(incidencia.fecha_resolucion) || '—'}</dd>
+          </div>
+        </dl>
+        {duracion && <p className="incidencia-card__duracion">✓ Resuelta {duracion}</p>}
+      </div>
+    </li>
+  );
+}
 
 function IncidenciaCard({
   incidencia,
@@ -228,6 +276,13 @@ export default function IncidenciasAbiertasPage() {
   const [erroresPorId, setErroresPorId] = useState({});
   const [confirmacion, setConfirmacion] = useState(null);
 
+  // Historial de resueltas: se carga la primera vez que se abre la pestaña
+  const [pestana, setPestana] = useState('pendientes');
+  const [historial, setHistorial] = useState(null);
+  const [cargandoHistorial, setCargandoHistorial] = useState(false);
+  const [errorHistorial, setErrorHistorial] = useState('');
+  const [busqueda, setBusqueda] = useState('');
+
   // Time state based on local system time
   const [horaActual, setHoraActual] = useState(() => {
     const d = new Date();
@@ -269,6 +324,33 @@ export default function IncidenciasAbiertasPage() {
   useEffect(() => {
     cargarIncidencias();
   }, [cargarIncidencias]);
+
+  const cargarHistorial = useCallback(async () => {
+    setCargandoHistorial(true);
+    setErrorHistorial('');
+
+    const result = await listarIncidenciasResueltas();
+    if (result.success) {
+      setHistorial(result.incidencias);
+    } else {
+      setErrorHistorial(result.error);
+    }
+    setCargandoHistorial(false);
+  }, []);
+
+  const abrirHistorial = () => {
+    setPestana('historial');
+    if (historial === null && !cargandoHistorial) cargarHistorial();
+  };
+
+  // Filtra el historial por título, responsable o ubicación
+  const historialFiltrado = useMemo(() => {
+    const texto = busqueda.trim().toLowerCase();
+    if (!historial || !texto) return historial ?? [];
+    return historial.filter((i) =>
+      [i.titulo, i.responsable, i.ubicacion].some((campo) => campo?.toLowerCase().includes(texto))
+    );
+  }, [historial, busqueda]);
 
   const cerrarModal = useCallback(() => setConfirmacion(null), []);
 
@@ -328,8 +410,13 @@ export default function IncidenciasAbiertasPage() {
     const result = await resolverIncidencia(incidencia.id);
 
     if (result.success) {
-      // Ya no está abierta ni en proceso: sale de esta vista
+      // Ya no está abierta ni en proceso: sale de pendientes y pasa al historial
       setIncidencias((prev) => prev.filter((i) => i.id !== incidencia.id));
+      setHistorial((prev) =>
+        prev === null
+          ? prev
+          : [{ ...incidencia, estado: 'resuelto', ...result.incidencia }, ...prev]
+      );
       quitarSeleccion(incidencia.id);
       setConfirmacion({
         titulo: incidencia.titulo,
@@ -397,47 +484,125 @@ export default function IncidenciasAbiertasPage() {
       />
       <div className="grain" />
 
-      <AdminHeader titulo="Incidencias abiertas" />
+      <AdminHeader titulo="Incidencias" />
 
       <main className="incidencias-panel">
-        <h1 className="incidencias-panel__title">Incidencias abiertas</h1>
+        <h1 className="incidencias-panel__title">Incidencias</h1>
         <p className="incidencias-panel__subtitle">
-          Asigna o reasigna un responsable a cada reporte pendiente y márcalo como resuelto al
-          terminar
+          {pestana === 'pendientes'
+            ? 'Asigna o reasigna un responsable a cada reporte pendiente y márcalo como resuelto al terminar'
+            : 'Consulta las incidencias que ya fueron resueltas y quién las atendió'}
         </p>
 
-        {cargando && <p className="incidencias-panel__estado">Cargando incidencias…</p>}
+        <div className="incidencias-tabs" role="tablist" aria-label="Vista de incidencias">
+          <button
+            type="button"
+            role="tab"
+            id="tab-pendientes"
+            aria-selected={pestana === 'pendientes'}
+            aria-controls="panel-pendientes"
+            className="incidencias-tabs__tab"
+            onClick={() => setPestana('pendientes')}
+          >
+            Pendientes
+            {!cargando && !errorLista && (
+              <span className="incidencias-tabs__contador">{incidencias.length}</span>
+            )}
+          </button>
+          <button
+            type="button"
+            role="tab"
+            id="tab-historial"
+            aria-selected={pestana === 'historial'}
+            aria-controls="panel-historial"
+            className="incidencias-tabs__tab"
+            onClick={abrirHistorial}
+          >
+            Historial
+            {historial !== null && (
+              <span className="incidencias-tabs__contador">{historial.length}</span>
+            )}
+          </button>
+        </div>
 
-        {!cargando && errorLista && (
-          <div className="incidencias-panel__error" role="alert">
-            <p>{errorLista}</p>
-            <button type="button" className="incidencias-boton-secundario" onClick={cargarIncidencias}>
-              Reintentar
-            </button>
-          </div>
+        {pestana === 'pendientes' && (
+          <section id="panel-pendientes" role="tabpanel" aria-labelledby="tab-pendientes">
+            {cargando && <p className="incidencias-panel__estado">Cargando incidencias…</p>}
+
+            {!cargando && errorLista && (
+              <div className="incidencias-panel__error" role="alert">
+                <p>{errorLista}</p>
+                <button type="button" className="incidencias-boton-secundario" onClick={cargarIncidencias}>
+                  Reintentar
+                </button>
+              </div>
+            )}
+
+            {!cargando && !errorLista && incidencias.length === 0 && (
+              <p className="incidencias-panel__estado">No hay incidencias pendientes.</p>
+            )}
+
+            {hayLista && (
+              <ul className="incidencia-lista">
+                {incidencias.map((incidencia) => (
+                  <IncidenciaCard
+                    key={incidencia.id}
+                    incidencia={incidencia}
+                    valor={seleccion[incidencia.id] ?? incidencia.responsable ?? ''}
+                    asignando={asignandoId === incidencia.id}
+                    resolviendo={resolviendoId === incidencia.id}
+                    bloqueado={ocupado}
+                    error={erroresPorId[incidencia.id]}
+                    onCambio={handleCambio}
+                    onAsignar={handleAsignar}
+                    onResolver={handleResolver}
+                  />
+                ))}
+              </ul>
+            )}
+          </section>
         )}
 
-        {!cargando && !errorLista && incidencias.length === 0 && (
-          <p className="incidencias-panel__estado">No hay incidencias pendientes.</p>
-        )}
+        {pestana === 'historial' && (
+          <section id="panel-historial" role="tabpanel" aria-labelledby="tab-historial">
+            {cargandoHistorial && <p className="incidencias-panel__estado">Cargando historial…</p>}
 
-        {hayLista && (
-          <ul className="incidencia-lista">
-            {incidencias.map((incidencia) => (
-              <IncidenciaCard
-                key={incidencia.id}
-                incidencia={incidencia}
-                valor={seleccion[incidencia.id] ?? incidencia.responsable ?? ''}
-                asignando={asignandoId === incidencia.id}
-                resolviendo={resolviendoId === incidencia.id}
-                bloqueado={ocupado}
-                error={erroresPorId[incidencia.id]}
-                onCambio={handleCambio}
-                onAsignar={handleAsignar}
-                onResolver={handleResolver}
-              />
-            ))}
-          </ul>
+            {!cargandoHistorial && errorHistorial && (
+              <div className="incidencias-panel__error" role="alert">
+                <p>{errorHistorial}</p>
+                <button type="button" className="incidencias-boton-secundario" onClick={cargarHistorial}>
+                  Reintentar
+                </button>
+              </div>
+            )}
+
+            {!cargandoHistorial && !errorHistorial && historial?.length === 0 && (
+              <p className="incidencias-panel__estado">Aún no hay incidencias resueltas.</p>
+            )}
+
+            {!cargandoHistorial && !errorHistorial && historial?.length > 0 && (
+              <>
+                <input
+                  type="search"
+                  className="incidencias-busqueda"
+                  placeholder="Buscar por título, responsable o ubicación…"
+                  aria-label="Buscar en el historial"
+                  value={busqueda}
+                  onChange={(e) => setBusqueda(e.target.value)}
+                />
+
+                {historialFiltrado.length === 0 ? (
+                  <p className="incidencias-panel__estado">Ninguna incidencia coincide con la búsqueda.</p>
+                ) : (
+                  <ul className="incidencia-lista">
+                    {historialFiltrado.map((incidencia) => (
+                      <HistorialCard key={incidencia.id} incidencia={incidencia} />
+                    ))}
+                  </ul>
+                )}
+              </>
+            )}
+          </section>
         )}
       </main>
 

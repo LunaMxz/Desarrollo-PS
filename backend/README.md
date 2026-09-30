@@ -37,3 +37,36 @@ Si te toca una tarjeta backend (ej. CU-04 Alta de residente), crea:
 - `routes/residentes.routes.js`, y registrala en `routes/index.js`
 
 No pongas queries SQL en el controller ni en el service - eso va SOLO en repositories/.
+
+## Pruebas automatizadas
+
+Se usan [Vitest](https://vitest.dev) + [supertest](https://github.com/ladjs/supertest). Las pruebas
+**no necesitan PostgreSQL**: los `repositories/` siempre se mockean.
+
+```
+npm test               # corre todas las pruebas una vez
+npm run test:watch     # modo watch mientras desarrollas
+npm run test:coverage  # reporte de cobertura (se genera en coverage/)
+```
+
+Estructura de `test/`:
+
+```
+test/
+  setup.js                 -> variables de entorno de prueba (JWT_SECRET) y silencia logs
+  helpers/fixtures.js      -> usuarios/incidencias de ejemplo y generador de tokens
+  unit/                    -> reglas de negocio (services + middleware), una por caso de uso
+    cu01-login.test.js
+    cu03-reportar-incidencia.test.js
+    cu04-alta-residente.test.js
+    cu05-baja-residente.test.js
+    cu08-gestionar-incidencias.test.js
+    cu09-resolver-incidencia.test.js
+  integration/             -> endpoints HTTP (rutas + controllers + permisos) con supertest
+    auth.api.test.js
+    residentes.api.test.js
+    incidencias.api.test.js
+```
+
+Al agregar un caso de uso nuevo, crea su `test/unit/cuXX-*.test.js` y agrega sus endpoints al
+archivo de `integration/` que corresponda.

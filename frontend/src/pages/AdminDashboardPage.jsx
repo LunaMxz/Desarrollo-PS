@@ -25,8 +25,8 @@ const SECCIONES_DISPONIBLES = [
     accesos: [
       {
         to: '/admin/incidencias',
-        titulo: 'Incidencias abiertas',
-        descripcion: 'Asignar o reasignar responsables a los reportes pendientes.',
+        titulo: 'Gestión de incidencias',
+        descripcion: 'Asignar responsables, resolver reportes y consultar el historial de resueltas.',
       },
     ],
   },

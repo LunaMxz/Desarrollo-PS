@@ -1,4 +1,5 @@
-import {obtenerCargosPorUnidad, findCargoById, insertarPago, actualizarEstadoCargo, sumarPagosDeCargo } from '../repositories/cargos.repository.js';
+import {findCargoById, insertarPago, actualizarEstadoCargo, sumarPagosDeCargo, listarCargosPendientesOParciales } 
+from '../repositories/pagos.repository.js';
 import { findUnidadById } from '../repositories/unidades.repository.js';
 export async function listarCargosDeUnidad(unidadId) {
     if (unidadId === undefined || unidadId === null || Number.isNaN(Number(unidadId))) {
@@ -12,7 +13,7 @@ export async function listarCargosDeUnidad(unidadId) {
         error.status = 404;
         throw error;
     }
-    return obtenerCargosPorUnidad(unidadId);
+    return listarCargosPendientesOParciales(unidadId);
 }
 export async function registrarPago({ cargoId, monto, registradoPor }) {
     if (cargoId === undefined || cargoId === null || Number.isNaN(Number(cargoId))) {

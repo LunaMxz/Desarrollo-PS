@@ -35,7 +35,7 @@ export async function registrarPago({ cargoId, monto, registradoPor }) {
     }
     if (cargo.estado === 'pagado') {
         const error = new Error('El cargo ya está pagado');
-        error.status = 400;
+        error.status = 409;
         throw error;
     }
     const pagadoPrevio = await sumarPagosDeCargo(cargoId);

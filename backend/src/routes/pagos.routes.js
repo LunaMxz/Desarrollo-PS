@@ -3,5 +3,5 @@ import { listarCargosHandler, registrarPagoHandler} from '../controllers/pagos.c
 import { requireAuth, requireAdmin } from '../middlewares/auth.middleware.js';
 const router = Router();
 router.get('/unidades/:id/cargos', requireAuth, requireAdmin, listarCargosHandler);
-router.post('/pagos', requireAuth, requireAdmin, registrarPagoHandler);
+router.post('/', requireAuth, requireAdmin, registrarPagoHandler);
 export default router;

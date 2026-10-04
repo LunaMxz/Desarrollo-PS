@@ -17,12 +17,9 @@ export async function registrarPagoHandler(req, res, next) {
             error.status = 400;
             throw error;
         }
-        const pago = await registrarPago({cargoId: cargo_id, monto, registradoPor: req.user.id});
-        res.status(201).json({message: 'Pago registrado exitosamente', pago});
+        const pago = await registrarPago({ cargoId: cargo_id, monto, registradoPor: req.user.id });
+        res.status(201).json({ message: 'Pago registrado exitosamente', pago });
     } catch (err) {
-        if ( err.message === 'Id de cargo inválido' || err.message === 'El monto debe ser un número mayor a 0' || 
-            err.message === 'El monto excede el saldo pendiente del cargo' || err.message === 'El cargo ya está pagado') { err.status = 400;}
-            if (err.message === 'Cargo no encontrado') err.status = 404;
-            next(err);
+        next(err);
         }
 }

@@ -10,6 +10,7 @@ router.use('/health', healthRoutes);
 router.use('/auth', authRoutes);
 router.use('/residentes', residentesRoutes);
 router.use('/incidencias', incidenciasRoutes);
+router.use('/cargos', cargosRoutes);
 router.use('/pagos', pagosRoutes);
 router.use('/cargos', cargosRoutes);
 export default router;

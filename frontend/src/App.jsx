@@ -7,7 +7,6 @@ import BajaResidentePage from './pages/BajaResidentePage';
 import IncidenciasAbiertasPage from './pages/IncidenciasAbiertasPage';
 import ReportarIncidenciaPage from './pages/ReportarIncidenciaPage';
 import ResidenteHomePage from './pages/ResidenteHomePage';
-import GenerarCargosPage from './pages/GenerarCargosPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Referenciada por ProtectedRoute cuando el rol del usuario no tiene permiso
@@ -36,7 +35,6 @@ export default function App() {
             <Route path="/admin/residentes/alta" element={<AltaResidentePage />} />
             <Route path="/admin/residentes/baja" element={<BajaResidentePage />} />
             <Route path="/admin/incidencias" element={<IncidenciasAbiertasPage />} />
-            <Route path="/admin/cargos/generar" element={<GenerarCargosPage />} />
           </Route>
 
           {/* Redirección por defecto */}

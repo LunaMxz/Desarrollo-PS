@@ -213,4 +213,38 @@ export async function resolverIncidencia(id) {
   }
 }
 
+/* ---------- Cargos (CU-06) ---------- */
+// POST /cargos/generar -> 201 { message, periodo, cargos, omitidas }
+//200 si no hay unidades con residente activo (cargos = [])
+//409 si todas las unidades ya tenían su cargo del periodo
+// Devuelve { success, mensaje, periodo, cargos, omitidas, sinUnidades, duplicado, error }.
+export async function generarCargos(monto) {
+  try {
+    const { data } = await apiClient.post('/cargos/generar', { monto });
+    const cargos = Array.isArray(data?.cargos) ? data.cargos : [];
+    const omitidas = Array.isArray(data?.omitidas) ? data.omitidas : [];
+    return {
+      success: true,
+      mensaje: data?.message || 'Los cargos del mes se generaron correctamente.',
+      periodo: data?.periodo,
+      cargos,
+      omitidas,
+      sinUnidades: cargos.length === 0,
+    };
+  } catch (err) {
+    if (err.response?.status === 409) {
+      return {
+        success: false,
+        duplicado: true,
+        error: err.response.data?.error || 'Los cargos de este mes ya fueron generados.',
+      };
+    }
+    return {
+      success: false,
+      duplicado: false,
+      error: mensajeDeError(err, { noAutorizado: 'No tienes permiso para generar cargos.' }),
+    };
+  }
+}
+
 export default apiClient;

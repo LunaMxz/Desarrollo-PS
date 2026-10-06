@@ -60,12 +60,14 @@ test/
     cu03-reportar-incidencia.test.js
     cu04-alta-residente.test.js
     cu05-baja-residente.test.js
+    cu06-generar-cargo.test.js
     cu08-gestionar-incidencias.test.js
     cu09-resolver-incidencia.test.js
   integration/             -> endpoints HTTP (rutas + controllers + permisos) con supertest
     auth.api.test.js
     residentes.api.test.js
     incidencias.api.test.js
+    cargos.api.test.js
 ```
 
 Al agregar un caso de uso nuevo, crea su `test/unit/cuXX-*.test.js` y agrega sus endpoints al

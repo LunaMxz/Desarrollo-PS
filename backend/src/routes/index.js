@@ -3,9 +3,13 @@ import healthRoutes from './health.routes.js';
 import authRoutes from './auth.routes.js';               // <- CU-01
 import residentesRoutes from './residentes.routes.js';   // <- CU-04 / CU-05
 import incidenciasRoutes from './incidencias.routes.js'; // <- CU-03 / CU-08 / CU-09
+import pagosRoutes from './pagos.routes.js'; // <- CU-02
+import cargosRoutes from './cargos.routes.js'; // <- CU-06
 const router = Router();
 router.use('/health', healthRoutes);
 router.use('/auth', authRoutes);
 router.use('/residentes', residentesRoutes);
 router.use('/incidencias', incidenciasRoutes);
+router.use('/pagos', pagosRoutes);
+router.use('/cargos', cargosRoutes);
 export default router;

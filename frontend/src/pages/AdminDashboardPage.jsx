@@ -30,11 +30,20 @@ const SECCIONES_DISPONIBLES = [
       },
     ],
   },
+  {
+    titulo: 'Cuotas y pagos',
+    accesos: [
+      {
+        to: '/admin/cargos/generar',
+        titulo: 'Generar cargos del mes',
+        descripcion: 'Aplicar la cuota mensual a todas las unidades con residente activo.',
+      },
+    ],
+  },
 ];
 
 // Secciones todavía no implementadas
 const ACCESOS_PROXIMAMENTE = [
-  { titulo: 'Cuotas y pagos', descripcion: 'Gestión de cargos mensuales y registro de pagos.' },
   { titulo: 'Comunicados', descripcion: 'Publicar avisos y comunicados para los residentes.' },
 ];
 

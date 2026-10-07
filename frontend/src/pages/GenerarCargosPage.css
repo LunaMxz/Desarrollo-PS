@@ -1,0 +1,178 @@
+/* Los estilos de fondo (.fondo-*, .torre, .ventana, .grain) ya son globales
+   y se reutilizan de las demás páginas del administrador. */
+.generar-cargos-screen {
+  --navy: #131C31;
+  --terracotta: #BF6B46;
+  --terracotta-bright: #E08D5B;
+  --beige: #C3A37C;
+  --crema: #F5EFE6;
+
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: 'Inter', -apple-system, sans-serif;
+  color: var(--crema);
+  background-color: var(--navy);
+}
+
+.generar-cargos-panel {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px 64px;
+  box-sizing: border-box;
+}
+
+.generar-cargos-card {
+  width: 100%;
+  max-width: 460px;
+  background: linear-gradient(150deg, rgba(18, 26, 43, 0.82) 0%, rgba(11, 18, 32, 0.92) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(195, 163, 124, 0.25);
+  border-top-color: rgba(195, 163, 124, 0.5);
+  border-radius: 20px;
+  padding: 40px 36px;
+  box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(191, 107, 70, 0.1);
+}
+
+.generar-cargos-card__title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: 28px;
+  margin: 0 0 6px;
+}
+
+.generar-cargos-card__subtitle {
+  margin: 0 0 24px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--beige);
+}
+
+/* ---------- Avisos ---------- */
+.generar-cargos-aviso {
+  margin: 0 0 20px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  border: 1px solid;
+}
+
+.generar-cargos-aviso--exito { color: #D6F5DE; background: rgba(20, 90, 50, 0.45); border-color: #3FA867; }
+.generar-cargos-aviso--duplicado { color: #FFE9C7; background: rgba(191, 107, 70, 0.18); border-color: var(--terracotta); }
+.generar-cargos-aviso--error { color: #FFD4D4; background: rgba(120, 20, 20, 0.5); border-color: #E53E3E; }
+
+/* ---------- Formulario ---------- */
+.generar-cargos-form { display: flex; flex-direction: column; gap: 20px; }
+
+.generar-cargos-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.generar-cargos-form__input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  background: rgba(10, 16, 28, 0.55);
+  border: 1.5px solid rgba(195, 163, 124, 0.25);
+  border-radius: 10px;
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.generar-cargos-form__input:focus-within {
+  border-color: var(--terracotta);
+  box-shadow: 0 0 12px rgba(191, 107, 70, 0.3);
+}
+
+.generar-cargos-form__input--error { border-color: #E53E3E; }
+
+.generar-cargos-form__signo { font-size: 18px; font-weight: 700; color: var(--terracotta-bright); }
+
+.generar-cargos-form__input input {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--crema);
+  font-family: inherit;
+  font-size: 18px;
+}
+
+.generar-cargos-form__input input::placeholder { color: rgba(245, 239, 230, 0.35); }
+.generar-cargos-form__input input:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.generar-cargos-form__error { font-size: 12px; color: #FFD4D4; }
+
+.generar-cargos-form__submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: none;
+  border-radius: 10px;
+  padding: 16px;
+  background: linear-gradient(135deg, #BF6B46 0%, #A45533 100%);
+  color: #FFFFFF;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(191, 107, 70, 0.35);
+  transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease;
+}
+
+.generar-cargos-form__submit:hover:not(:disabled) {
+  background: linear-gradient(135deg, #CE7750 0%, #BF6B46 100%);
+  transform: translateY(-2px);
+}
+
+.generar-cargos-form__submit:disabled { opacity: 0.6; cursor: wait; }
+
+.generar-cargos-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #FFFFFF;
+  border-radius: 50%;
+  animation: generarCargosGirar 700ms linear infinite;
+}
+
+@keyframes generarCargosGirar { to { transform: rotate(360deg); } }
+
+@media (max-width: 480px) { .generar-cargos-card { padding: 28px 20px; } }
+@media (prefers-reduced-motion: reduce) {
+  .generar-cargos-spinner { animation: none; }
+  .generar-cargos-form__submit { transition: none; }
+}
+
+/* ---------- Resumen de la última generación ---------- */
+.generar-cargos-resumen {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 0 24px;
+  padding: 16px;
+  background: rgba(10, 16, 28, 0.55);
+  border: 1px solid rgba(195, 163, 124, 0.25);
+  border-radius: 12px;
+}
+
+.generar-cargos-resumen div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.generar-cargos-resumen dt { color: var(--beige); }
+.generar-cargos-resumen dd { margin: 0; font-weight: 600; text-align: right; text-transform: capitalize; overflow-wrap: anywhere; }

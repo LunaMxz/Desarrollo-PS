@@ -1,4 +1,4 @@
-import {findCargoById, insertarPago, actualizarEstadoCargo, sumarPagosDeCargo, listarCargosPendientesOParciales } 
+import {findCargoById, insertarPago, actualizarEstadoCargo, sumarPagosDeCargo, listarCargosPendientesOParciales, obtenerCargosConPagosPorUnidad }
 from '../repositories/pagos.repository.js';
 import { findUnidadById } from '../repositories/unidades.repository.js';
 export async function listarCargosDeUnidad(unidadId) {
@@ -50,4 +50,82 @@ export async function registrarPago({ cargoId, monto, registradoPor }) {
     const nuevoEstado = nuevoTotalPagado >= Number(cargo.monto) ? 'pagado' : 'parcial';
     const cargoActualizado = await actualizarEstadoCargo(cargoId, nuevoEstado);
     return { ...pago, cargo: cargoActualizado };
+}
+// Se suma en centavos para evitar errores de punto flotante (0.1 + 0.2).
+function aCentavos(valor) {
+    return Math.round(Number(valor) * 100);
+}
+function aMonto(centavos) {
+    return centavos / 100;
+}
+// CU-07: estado de cuenta de la unidad del residente autenticado.
+// unidadId viene de req.user (revalidado en BD por requireAuth), nunca del cliente.
+export async function obtenerEstadoCuenta(unidadId) {
+    const id = Number(unidadId);
+    if (!Number.isInteger(id) || id < 1) {
+        const error = new Error('El residente autenticado no tiene una unidad asignada');
+        error.status = 403;
+        throw error;
+    }
+    const unidad = await findUnidadById(id);
+    if (!unidad) {
+        const error = new Error('Unidad no encontrada');
+        error.status = 404;
+        throw error;
+    }
+    const filas = await obtenerCargosConPagosPorUnidad(id);
+    const cargosPorId = new Map();
+    const pagos = [];
+    for (const fila of filas) {
+        let cargo = cargosPorId.get(fila.cargo_id);
+        if (!cargo) {
+            cargo = {
+                id: fila.cargo_id,
+                unidad_id: fila.unidad_id,
+                concepto: fila.concepto,
+                monto: fila.cargo_monto,
+                periodo: fila.periodo,
+                estado: fila.cargo_estado,
+                fecha_generacion: fila.fecha_generacion,
+                pagos: [],
+            };
+            cargosPorId.set(fila.cargo_id, cargo);
+        }
+        if (fila.pago_id !== null && fila.pago_id !== undefined) {
+            const pago = {
+                id: fila.pago_id,
+                cargo_id: fila.cargo_id,
+                periodo: fila.periodo,
+                concepto: fila.concepto,
+                monto: fila.pago_monto,
+                fecha_pago: fila.fecha_pago,
+            };
+            cargo.pagos.push(pago);
+            pagos.push(pago);
+        }
+    }
+    let totalCargadoCent = 0;
+    let totalPagadoCent = 0;
+    let saldoCent = 0;
+    const cargos = [...cargosPorId.values()].map((cargo) => {
+        const montoCent = aCentavos(cargo.monto);
+        const pagadoCent = cargo.pagos.reduce((total, pago) => total + aCentavos(pago.monto), 0);
+        const pendienteCent = Math.max(0, montoCent - pagadoCent);
+        totalCargadoCent += montoCent;
+        totalPagadoCent += pagadoCent;
+        saldoCent += pendienteCent;
+        return { ...cargo, total_pagado: aMonto(pagadoCent), saldo_pendiente: aMonto(pendienteCent) };
+    });
+    // Historial de pagos del más reciente al más antiguo
+    pagos.sort((a, b) => new Date(b.fecha_pago) - new Date(a.fecha_pago) || b.id - a.id);
+    return {
+        unidad: { id: unidad.id, identificador: unidad.identificador },
+        cargos,
+        pagos,
+        resumen: {
+            total_cargado: aMonto(totalCargadoCent),
+            total_pagado: aMonto(totalPagadoCent),
+        },
+        saldo_actual: aMonto(saldoCent),
+    };
 }

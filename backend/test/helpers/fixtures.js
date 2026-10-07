@@ -80,3 +80,22 @@ export function errorCargoDuplicado() {
   error.code = '23505';
   return error;
 }
+
+// Fila de pagos.repository.obtenerCargosConPagosPorUnidad (CU-07).
+// Sin pago, las columnas pago_* llegan en null por el LEFT JOIN.
+export function crearFilaCargoPagoFake(sobrescribir = {}) {
+  return {
+    cargo_id: 500,
+    unidad_id: residente.unidad_id,
+    concepto: 'Cuota mensual',
+    cargo_monto: '1500.00',
+    periodo: '2026-10',
+    cargo_estado: 'pendiente',
+    fecha_generacion: '2026-10-01T10:00:00.000Z',
+    pago_id: null,
+    pago_monto: null,
+    fecha_pago: null,
+    registrado_por: null,
+    ...sobrescribir,
+  };
+}

@@ -32,3 +32,9 @@ export function requireAdmin(req, res, next) {
   }
   next();
 }
+export function requireResident(req, res, next) {
+  if (!req.user || req.user.rol !== 'residente') {
+    return res.status(403).json({ error: 'Acceso denegado. Solo los residentes pueden consultar esta información.' });
+  }
+  next();
+}

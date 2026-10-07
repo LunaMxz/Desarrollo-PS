@@ -8,3 +8,14 @@ export async function findUnidadById(id) {
     );
     return result.rows[0] || null;
 }
+export async function obtenerUnidadesConResidenteActivo() {
+    const result = await pool.query(
+        `SELECT uni.id, uni.identificador
+        FROM unidades uni
+        JOIN usuarios u ON u.unidad_id = uni.id
+        WHERE u.rol = 'residente'
+        AND u.activo = true
+        ORDER BY uni.id`
+    );
+    return result.rows;
+}

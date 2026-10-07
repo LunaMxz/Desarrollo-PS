@@ -59,3 +59,24 @@ export function crearIncidenciaFake(sobrescribir = {}) {
     ...sobrescribir,
   };
 }
+
+// Cargo de ejemplo (tal como lo regresa cargos.repository)
+export function crearCargoFake(sobrescribir = {}) {
+  return {
+    id: 500,
+    unidad_id: residente.unidad_id,
+    concepto: 'Cuota mensual',
+    monto: '1500.00',
+    periodo: '2026-10',
+    estado: 'pendiente',
+    fecha_generacion: '2026-10-01T10:00:00.000Z',
+    ...sobrescribir,
+  };
+}
+
+// Error de cargo duplicado (tal como lo lanza pg por el índice único unidad_id + periodo)
+export function errorCargoDuplicado() {
+  const error = new Error('duplicate key value violates unique constraint "cargos_unidad_id_periodo_key"');
+  error.code = '23505';
+  return error;
+}

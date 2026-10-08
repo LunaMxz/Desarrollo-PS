@@ -13,7 +13,12 @@ export async function listarCargosDeUnidad(unidadId) {
         error.status = 404;
         throw error;
     }
-    return listarCargosPendientesOParciales(unidadId);
+    const cargos = await listarCargosPendientesOParciales(unidadId);
+    return cargos.map((cargo) => ({
+        ...cargo,
+        total_pagado: aMonto(aCentavos(cargo.total_pagado)),
+        saldo_pendiente: aMonto(aCentavos(cargo.saldo_pendiente)),
+    }));
 }
 export async function registrarPago({ cargoId, monto, registradoPor }) {
     if (cargoId === undefined || cargoId === null || Number.isNaN(Number(cargoId))) {
@@ -38,18 +43,27 @@ export async function registrarPago({ cargoId, monto, registradoPor }) {
         error.status = 409;
         throw error;
     }
-    const pagadoPrevio = await sumarPagosDeCargo(cargoId);
-    const saldoPendiente = Number(cargo.monto) - Number(pagadoPrevio);
-    if (montoNum > saldoPendiente) {
+    // Se compara en centavos: 1500.30 - 1000.10 en flotante da 500.1999... y rechazaría el pago exacto
+    const montoCent = aCentavos(montoNum);
+    const cargoCent = aCentavos(cargo.monto);
+    const pagadoPrevioCent = aCentavos(await sumarPagosDeCargo(cargoId));
+    if (montoCent > cargoCent - pagadoPrevioCent) {
         const error = new Error('El monto excede el saldo pendiente del cargo');
         error.status = 400;
         throw error;
     }
-    const pago = await insertarPago({cargoId, monto: montoNum, registradoPor});
-    const nuevoTotalPagado = Number(pagadoPrevio) + montoNum;
-    const nuevoEstado = nuevoTotalPagado >= Number(cargo.monto) ? 'pagado' : 'parcial';
+    const pago = await insertarPago({cargoId, monto: aMonto(montoCent), registradoPor});
+    const nuevoTotalPagadoCent = pagadoPrevioCent + montoCent;
+    const nuevoEstado = nuevoTotalPagadoCent >= cargoCent ? 'pagado' : 'parcial';
     const cargoActualizado = await actualizarEstadoCargo(cargoId, nuevoEstado);
-    return { ...pago, cargo: cargoActualizado };
+    return {
+        ...pago,
+        cargo: {
+            ...cargoActualizado,
+            total_pagado: aMonto(nuevoTotalPagadoCent),
+            saldo_pendiente: aMonto(Math.max(0, cargoCent - nuevoTotalPagadoCent)),
+        },
+    };
 }
 // Se suma en centavos para evitar errores de punto flotante (0.1 + 0.2).
 function aCentavos(valor) {

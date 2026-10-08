@@ -1,11 +1,15 @@
 import { pool } from '../config/db.js';
 export async function listarCargosPendientesOParciales(unidadId) {
   const result = await pool.query(
-    `SELECT id, unidad_id, concepto, monto, periodo, estado, fecha_generacion
-    FROM cargos
-    WHERE unidad_id = $1
-    AND estado IN ('pendiente', 'parcial')
-    ORDER BY periodo DESC`,
+    `SELECT c.id, c.unidad_id, c.concepto, c.monto, c.periodo, c.estado, c.fecha_generacion,
+           COALESCE(SUM(p.monto), 0) AS total_pagado,
+           c.monto - COALESCE(SUM(p.monto), 0) AS saldo_pendiente
+    FROM cargos c
+    LEFT JOIN pagos p ON p.cargo_id = c.id
+    WHERE c.unidad_id = $1
+    AND c.estado IN ('pendiente', 'parcial')
+    GROUP BY c.id
+    ORDER BY c.periodo DESC`,
     [unidadId]
   );
   return result.rows;

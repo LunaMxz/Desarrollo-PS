@@ -8,6 +8,8 @@ import './RegistrarPagoPage.css';
 
 const moneda = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' });
 const alturas = [16, 22, 19, 28, 24, 32, 26, 30, 22, 25, 18];
+// El backend envía saldo_pendiente; si faltara, se usa el importe total del cargo.
+const saldoDe = (cargo) => Number(cargo.saldo_pendiente ?? cargo.monto);
 const errorMensaje = (err) => err.response?.data?.error || 'No se pudo completar la solicitud. Verifica tu conexión e intenta de nuevo.';
 
 export default function RegistrarPagoPage() {
@@ -91,8 +93,8 @@ export default function RegistrarPagoPage() {
       setAviso({ tipo: 'error', texto: 'Ingresa un monto mayor a cero con máximo dos decimales.' });
       return;
     }
-    if (Number(monto) > Number(cargo.monto)) {
-      setAviso({ tipo: 'error', texto: 'El pago no puede exceder el importe del cargo.' });
+    if (Math.round(Number(monto) * 100) > Math.round(saldoDe(cargo) * 100)) {
+      setAviso({ tipo: 'error', texto: `El pago no puede exceder el saldo pendiente (${moneda.format(saldoDe(cargo))}).` });
       return;
     }
     enviando.current = true;
@@ -152,14 +154,14 @@ export default function RegistrarPagoPage() {
                 {cargos.map((c) => <li key={c.id}><button className="registrar-pago-opcion registrar-pago-cargo" aria-pressed={cargoId === c.id} disabled={guardando} onClick={() => {
                   setCargoId(c.id); setMonto('');
                   setAviso(c.estado === 'pagado' ? { tipo: 'duplicado', texto: 'El cargo ya está pagado.' } : null);
-                }}><span><strong>{c.concepto}</strong><span className="registrar-pago-detalle">Periodo {c.periodo} · Importe del cargo: {moneda.format(c.monto)}</span></span><span className={`registrar-pago-estado registrar-pago-estado--${c.estado}`}>{c.estado}</span></button></li>)}
+                }}><span><strong>{c.concepto}</strong><span className="registrar-pago-detalle">Periodo {c.periodo} · Importe del cargo: {moneda.format(c.monto)}{c.estado !== 'pagado' && <> · Saldo pendiente: {moneda.format(saldoDe(c))}</>}</span></span><span className={`registrar-pago-estado registrar-pago-estado--${c.estado}`}>{c.estado}</span></button></li>)}
               </ul>
             </>}
           </section>}
           {aviso && <p className={`generar-cargos-aviso generar-cargos-aviso--${aviso.tipo}`} role={aviso.tipo === 'exito' ? 'status' : 'alert'}>{aviso.texto}</p>}
           {cargo && cargo.estado !== 'pagado' && <form className="generar-cargos-form" onSubmit={registrar}>
             <h2 className="registrar-pago-titulo">Capturar pago · {cargo.concepto}</h2>
-            {cargo.estado === 'parcial' && <p className="registrar-pago-nota">El cargo tiene abonos previos. El importe mostrado es el total original; el saldo disponible se valida al registrar el pago.</p>}
+            {cargo.estado === 'parcial' && <p className="registrar-pago-nota">El cargo tiene abonos previos por {moneda.format(Number(cargo.total_pagado ?? 0))}. Saldo pendiente: {moneda.format(saldoDe(cargo))}.</p>}
             <label className="generar-cargos-form__field" htmlFor="pago-monto">Monto del pago
               <div className="generar-cargos-form__input"><span aria-hidden="true">$</span><input id="pago-monto" inputMode="decimal" placeholder="0.00" required value={monto} disabled={guardando} onChange={(e) => setMonto(e.target.value)} /></div>
             </label>

@@ -1,4 +1,4 @@
-import { listarCargosDeUnidad, registrarPago } from '../services/pagos.service.js';
+import { listarCargosDeUnidad, registrarPago, obtenerEstadoCuenta } from '../services/pagos.service.js';
 export async function listarCargosHandler(req, res, next) {
     try {
         const cargos = await listarCargosDeUnidad(req.params.id);
@@ -22,4 +22,13 @@ export async function registrarPagoHandler(req, res, next) {
     } catch (err) {
         next(err);
         }
+}
+// CU-07: la unidad sale de req.user (requireAuth), nunca de params/query/body.
+export async function estadoCuentaHandler(req, res, next) {
+    try {
+        const estadoCuenta = await obtenerEstadoCuenta(req.user.unidad_id);
+        res.json(estadoCuenta);
+    } catch (err) {
+        next(err);
+    }
 }

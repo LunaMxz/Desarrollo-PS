@@ -58,3 +58,19 @@ export async function actualizarEstadoCargo(id, estado) {
   );
   return result.rows[0] || null;
 }
+// CU-07: cargos de una unidad con sus pagos (una fila por combinación cargo/pago).
+// El LEFT JOIN conserva los cargos que aún no tienen pagos.
+export async function obtenerCargosConPagosPorUnidad(unidadId) {
+  const result = await pool.query(
+    `SELECT
+       c.id AS cargo_id, c.unidad_id, c.concepto, c.monto AS cargo_monto,
+       c.periodo, c.estado AS cargo_estado, c.fecha_generacion,
+       p.id AS pago_id, p.monto AS pago_monto, p.fecha_pago, p.registrado_por
+     FROM cargos c
+     LEFT JOIN pagos p ON p.cargo_id = c.id
+     WHERE c.unidad_id = $1
+     ORDER BY c.periodo DESC, c.id DESC, p.fecha_pago ASC, p.id ASC`,
+    [unidadId]
+  );
+  return result.rows;
+}

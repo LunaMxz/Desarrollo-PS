@@ -4,7 +4,6 @@ import AdminHeader from '../components/AdminHeader';
 import { obtenerCieloParaHora, obtenerProporcionLuces } from '../utils/coloresHorario';
 import './GenerarCargosPage.css';
 
-// Skyline decorativo (mismas clases globales que usan las demás páginas del admin)
 const ALTURAS_FONDO = [40, 65, 50, 80, 60, 90, 55, 75, 45, 68, 52];
 const TORRES_FRONTAL = [
   { heightVh: 16, cols: 4 }, { heightVh: 22, cols: 3 }, { heightVh: 19, cols: 5 },

@@ -9,6 +9,7 @@ import ReportarIncidenciaPage from './pages/ReportarIncidenciaPage';
 import ResidenteHomePage from './pages/ResidenteHomePage';
 import GenerarCargosPage from './pages/GenerarCargosPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import RegistrarPagoPage from './pages/RegistrarPagoPage';
 
 // Referenciada por ProtectedRoute cuando el rol del usuario no tiene permiso
 const Unauthorized = () => <h1>No tienes permiso para ver esta página</h1>;
@@ -37,6 +38,7 @@ export default function App() {
             <Route path="/admin/residentes/baja" element={<BajaResidentePage />} />
             <Route path="/admin/incidencias" element={<IncidenciasAbiertasPage />} />
             <Route path="/admin/cargos/generar" element={<GenerarCargosPage />} />
+            <Route path="/admin/pagos/registrar" element={<RegistrarPagoPage />} />
           </Route>
 
           {/* Redirección por defecto */}

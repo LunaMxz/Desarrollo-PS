@@ -38,6 +38,11 @@ const SECCIONES_DISPONIBLES = [
         titulo: 'Generar cargos del mes',
         descripcion: 'Aplicar la cuota mensual a todas las unidades con residente activo.',
       },
+      {
+        to: '/admin/pagos/registrar',
+        titulo: 'Registrar pago',
+        descripcion: 'Buscar una unidad y registrar pagos de sus cargos pendientes o parciales.',
+      },
     ],
   },
 ];

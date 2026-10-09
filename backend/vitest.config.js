@@ -12,6 +12,8 @@ export default defineConfig({
       include: ['src/**/*.js'],
       exclude: ['src/server.js', 'src/config/db.js'],
       reporter: ['text', 'html', 'lcov'],
+      // Mínimo acordado por el equipo: si baja de aquí, `npm run test:coverage` falla
+      thresholds: { statements: 60, branches: 60, functions: 60, lines: 60 },
     },
   },
 });

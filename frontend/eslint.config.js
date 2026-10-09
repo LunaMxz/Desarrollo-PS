@@ -6,7 +6,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 // Configuración mínima: reglas recomendadas de ESLint + reglas básicas de React.
 // Lo que es solo estilo o limpieza queda como "warn" para no bloquear el CI.
 export default [
-  { ignores: ['node_modules/', 'dist/'] },
+  { ignores: ['node_modules/', 'dist/', 'coverage/'] },
   js.configs.recommended,
   {
     files: ['**/*.{js,jsx}'],

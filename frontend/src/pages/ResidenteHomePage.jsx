@@ -4,7 +4,6 @@ import { useAuth } from '../context/AuthContext';
 import './ResidenteHomePage.css';
 
 const SECCIONES_PROXIMAMENTE = [
-  { titulo: 'Mis cuotas', descripcion: 'Consulta tus cargos y el historial de pagos.' },
   { titulo: 'Comunicados', descripcion: 'Avisos y comunicados publicados por la administración.' },
 ];
 
@@ -183,6 +182,15 @@ export default function ResidenteHomePage() {
           >
             <h3>Reportar incidencia</h3>
             <p>Levanta reportes sobre tu unidad o áreas comunes.</p>
+          </button>
+
+          <button
+            type="button"
+            className="residente-home-tarjeta residente-home-tarjeta--activa"
+            onClick={() => navigate('/residentes/estado-cuenta')}
+          >
+            <h3>Mis cuotas</h3>
+            <p>Consulta tus cargos, el historial de pagos y tu saldo actual.</p>
           </button>
 
           {SECCIONES_PROXIMAMENTE.map((seccion) => (

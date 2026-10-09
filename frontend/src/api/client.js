@@ -247,4 +247,29 @@ export async function generarCargos(monto) {
   }
 }
 
+/* ---------- Estado de cuenta (CU-07) ---------- */
+// GET /unidades/mi-estado-cuenta -> 200 { unidad, cargos, pagos, resumen, saldo_actual }
+// La unidad la decide el backend a partir del JWT; el residente no puede pedir otra.
+// Devuelve { success, estadoCuenta, error }.
+export async function obtenerMiEstadoCuenta() {
+  try {
+    const { data } = await apiClient.get('/unidades/mi-estado-cuenta');
+    return {
+      success: true,
+      estadoCuenta: {
+        unidad: data?.unidad ?? null,
+        cargos: Array.isArray(data?.cargos) ? data.cargos : [],
+        pagos: Array.isArray(data?.pagos) ? data.pagos : [],
+        resumen: data?.resumen ?? { total_cargado: 0, total_pagado: 0 },
+        saldoActual: Number(data?.saldo_actual ?? 0),
+      },
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: mensajeDeError(err, { noAutorizado: 'No tienes permiso para consultar este estado de cuenta.' }),
+    };
+  }
+}
+
 export default apiClient;

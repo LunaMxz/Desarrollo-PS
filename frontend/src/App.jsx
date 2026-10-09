@@ -10,6 +10,7 @@ import ResidenteHomePage from './pages/ResidenteHomePage';
 import GenerarCargosPage from './pages/GenerarCargosPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import RegistrarPagoPage from './pages/RegistrarPagoPage';
+import MiEstadoCuentaPage from './pages/MiEstadoCuentaPage';
 
 // Referenciada por ProtectedRoute cuando el rol del usuario no tiene permiso
 const Unauthorized = () => <h1>No tienes permiso para ver esta página</h1>;
@@ -29,6 +30,11 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/residentes" element={<ResidenteHomePage />} />
             <Route path="/incidencias/reportar" element={<ReportarIncidenciaPage />} />
+          </Route>
+
+          {/* Rutas exclusivas del residente (el backend también rechaza a otros roles) */}
+          <Route element={<ProtectedRoute rolesPermitidos={['residente']} />}>
+            <Route path="/residentes/estado-cuenta" element={<MiEstadoCuentaPage />} />
           </Route>
 
           {/* Rutas Privadas restringidas por Rol */}

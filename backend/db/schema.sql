@@ -75,21 +75,53 @@ CREATE TABLE comunicados (
 );
 
 -- MODULO: Transparencia y finanzas
-CREATE TYPE tipo_archivo AS ENUM ('pdf', 'jpg', 'png');
+-- publicacion -> conceptos de gasto -> fotos y comprobantes (por concepto o generales)
+CREATE TYPE categoria_gasto AS ENUM (
+    'mantenimiento', 'limpieza', 'seguridad', 'servicios', 'mejoras', 'otros'
+);
 
+CREATE TYPE rol_archivo AS ENUM ('foto', 'comprobante');
+
+-- Una publicacion = un "reporte de gasto" (ej. "Mejoras del jardin - Octubre")
 CREATE TABLE publicaciones_transparencia (
     id                SERIAL PRIMARY KEY,
     titulo            VARCHAR(150) NOT NULL,
     descripcion       TEXT,
+    fecha_gasto       DATE NOT NULL DEFAULT CURRENT_DATE,   -- cuando se hizo el gasto
     autor_id          INTEGER NOT NULL REFERENCES usuarios(id),
-    fecha_publicacion TIMESTAMP NOT NULL DEFAULT NOW()
+    fecha_publicacion TIMESTAMP NOT NULL DEFAULT NOW()      -- cuando se publico
 );
 
+-- Cada renglon del gasto: "Banca de jardin - $2,500"
+-- El total de la publicacion NO se guarda: se calcula con SUM(monto)
+CREATE TABLE conceptos_gasto (
+    id             SERIAL PRIMARY KEY,
+    publicacion_id INTEGER NOT NULL
+                   REFERENCES publicaciones_transparencia(id) ON DELETE CASCADE,
+    nombre         VARCHAR(150) NOT NULL,
+    mensaje        TEXT,
+    monto          NUMERIC(10,2) NOT NULL CHECK (monto > 0),
+    categoria      categoria_gasto NOT NULL DEFAULT 'otros'
+);
+
+-- Fotos y comprobantes (facturas/tickets).
+-- concepto_id NULL = comprobante GENERAL (un ticket que cubre varios conceptos)
 CREATE TABLE archivos_transparencia (
     id              SERIAL PRIMARY KEY,
-    publicacion_id  INTEGER NOT NULL REFERENCES publicaciones_transparencia(id),
-    url_archivo     VARCHAR(255) NOT NULL,
-    tipo_archivo    tipo_archivo NOT NULL,
+    publicacion_id  INTEGER NOT NULL
+                    REFERENCES publicaciones_transparencia(id) ON DELETE CASCADE,
+    concepto_id     INTEGER
+                    REFERENCES conceptos_gasto(id) ON DELETE CASCADE,
+    rol             rol_archivo NOT NULL,
+    url_archivo     VARCHAR(255) NOT NULL,   -- ruta relativa, ej. /uploads/transparencia/uuid.jpg
+    mime_type       VARCHAR(50)  NOT NULL,   -- image/jpeg, image/png, application/pdf
     nombre_original VARCHAR(150) NOT NULL,
-    fecha_subida    TIMESTAMP NOT NULL DEFAULT NOW()
+    fecha_subida    TIMESTAMP NOT NULL DEFAULT NOW(),
+    -- Una foto siempre pertenece a un concepto; solo un comprobante puede ser general
+    CONSTRAINT foto_requiere_concepto CHECK (concepto_id IS NOT NULL OR rol = 'comprobante')
 );
+
+CREATE INDEX idx_conceptos_publicacion ON conceptos_gasto(publicacion_id);
+CREATE INDEX idx_archivos_publicacion  ON archivos_transparencia(publicacion_id);
+CREATE INDEX idx_archivos_concepto     ON archivos_transparencia(concepto_id);
+CREATE INDEX idx_publicaciones_fecha   ON publicaciones_transparencia(fecha_publicacion DESC);

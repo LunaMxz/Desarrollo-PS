@@ -1,4 +1,4 @@
-import { insertarComunicado } from '../repositories/comunicados.repository.js';
+import { insertarComunicado, listarComunicados as listar } from '../repositories/comunicados.repository.js';
 const MAX_TITULO = 150;
 export async function publicarComunicado({ titulo, contenido, autorId } = {}) {
   if (typeof titulo !== 'string' || !titulo.trim()) {
@@ -21,4 +21,9 @@ export async function publicarComunicado({ titulo, contenido, autorId } = {}) {
     contenido: contenido.trim(),
     autorId,
   });
+}
+
+// CU-11: si no hay comunicados regresa [] (no es un error)
+export async function listarComunicados() {
+  return listar();
 }

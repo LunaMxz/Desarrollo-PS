@@ -11,6 +11,7 @@ import GenerarCargosPage from './pages/GenerarCargosPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import RegistrarPagoPage from './pages/RegistrarPagoPage';
 import MiEstadoCuentaPage from './pages/MiEstadoCuentaPage';
+import PublicarComunicadoPage from './pages/PublicarComunicadoPage';
 
 // Referenciada por ProtectedRoute cuando el rol del usuario no tiene permiso
 const Unauthorized = () => <h1>No tienes permiso para ver esta página</h1>;
@@ -45,6 +46,7 @@ export default function App() {
             <Route path="/admin/incidencias" element={<IncidenciasAbiertasPage />} />
             <Route path="/admin/cargos/generar" element={<GenerarCargosPage />} />
             <Route path="/admin/pagos/registrar" element={<RegistrarPagoPage />} />
+            <Route path="/admin/comunicados/nuevo" element={<PublicarComunicadoPage />} />
           </Route>
 
           {/* Redirección por defecto */}

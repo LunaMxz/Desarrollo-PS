@@ -44,13 +44,20 @@ const SECCIONES_DISPONIBLES = [
         descripcion: 'Buscar una unidad y registrar pagos de sus cargos pendientes o parciales.',
       },
     ],
+  },  {
+    titulo: 'Comunicados',
+    accesos: [
+      {
+        to: '/admin/comunicados/nuevo',
+        titulo: 'Publicar comunicado',
+        descripcion: 'Publicar avisos y comunicados para los residentes.',
+      },
+    ],
   },
 ];
 
-// Secciones todavía no implementadas
-const ACCESOS_PROXIMAMENTE = [
-  { titulo: 'Comunicados', descripcion: 'Publicar avisos y comunicados para los residentes.' },
-];
+// Secciones todavía no implementadas (la sección "Próximamente" se oculta si está vacía)
+const ACCESOS_PROXIMAMENTE = [];
 
 // Datos estáticos para renderizar los edificios
 const ALTURAS_FONDO = [40, 65, 50, 80, 60, 90, 55, 75, 45, 68, 52];
@@ -222,17 +229,19 @@ export default function AdminDashboardPage() {
           </section>
         ))}
 
-        <section>
-          <h2 className="admin-dashboard-seccion__titulo">Próximamente</h2>
-          <div className="admin-dashboard-grid">
-            {ACCESOS_PROXIMAMENTE.map((acceso) => (
-              <div key={acceso.titulo} className="admin-dashboard-tarjeta admin-dashboard-tarjeta--deshabilitada">
-                <h3>{acceso.titulo}</h3>
-                <p>{acceso.descripcion}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        {ACCESOS_PROXIMAMENTE.length > 0 && (
+          <section>
+            <h2 className="admin-dashboard-seccion__titulo">Próximamente</h2>
+            <div className="admin-dashboard-grid">
+              {ACCESOS_PROXIMAMENTE.map((acceso) => (
+                <div key={acceso.titulo} className="admin-dashboard-tarjeta admin-dashboard-tarjeta--deshabilitada">
+                  <h3>{acceso.titulo}</h3>
+                  <p>{acceso.descripcion}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
     </div>
   );

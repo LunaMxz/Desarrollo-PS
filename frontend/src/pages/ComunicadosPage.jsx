@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { listarComunicados } from '../api/comunicados.api';
 import AdminHeader from '../components/AdminHeader';
+import { useAuth } from '../context/AuthContext';
 import ListaGastos from '../components/ListaGastos';
 import { obtenerCieloParaHora, obtenerProporcionLuces } from '../utils/coloresHorario';
 import './ComunicadosPage.css';
@@ -17,6 +18,11 @@ const LIMITE = 10;
 const formatoFecha = new Intl.DateTimeFormat('es-MX', { dateStyle: 'long' });
 
 export default function ComunicadosPage() {
+  // La misma pantalla sirve de historial para el admin (/admin/comunicados);
+  // solo cambian el encabezado y a dónde regresa.
+  const { user } = useAuth();
+  const esAdmin = user?.rol === 'admin';
+
   const [horaActual, setHoraActual] = useState(() => {
     const d = new Date();
     return d.getHours() + d.getMinutes() / 60;
@@ -127,12 +133,20 @@ export default function ComunicadosPage() {
       <div className="grain" aria-hidden="true" />
 
 
-      <AdminHeader titulo="Comunicados" portal="Portal de residentes"
-        volverA="/residentes" textoVolver="Volver al inicio" />
+      {esAdmin ? (
+        <AdminHeader titulo="Historial de comunicados" />
+      ) : (
+        <AdminHeader titulo="Comunicados" portal="Portal de residentes"
+          volverA="/residentes" textoVolver="Volver al inicio" />
+      )}
       <main className="comunicados-contenido">
         <div className="comunicados-panel">
         <h2 className="comunicados-titulo">Avisos y transparencia</h2>
-        <p className="comunicados-subtitulo">Mantente al tanto de las novedades y los gastos de tu comunidad.</p>
+        <p className="comunicados-subtitulo">
+          {esAdmin
+            ? 'Consulta los avisos y los reportes de gasto publicados, tal como los ven los residentes.'
+            : 'Mantente al tanto de las novedades y los gastos de tu comunidad.'}
+        </p>
         <div className="comunicados-tabs" role="tablist" aria-label="Tipo de publicación"
           onKeyDown={navegarPestanas}>
           {['avisos', 'transparencia'].map((nombre) => (

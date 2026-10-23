@@ -49,6 +49,7 @@ export default function App() {
             <Route path="/admin/incidencias" element={<IncidenciasAbiertasPage />} />
             <Route path="/admin/cargos/generar" element={<GenerarCargosPage />} />
             <Route path="/admin/pagos/registrar" element={<RegistrarPagoPage />} />
+            <Route path="/admin/comunicados" element={<ComunicadosPage />} />
             <Route path="/admin/comunicados/nuevo" element={<PublicarComunicadoPage />} />
             <Route path="/admin/transparencia/nueva" element={<PublicarGastoPage />} />
           </Route>

@@ -53,6 +53,11 @@ const SECCIONES_DISPONIBLES = [
         titulo: 'Publicar comunicado',
         descripcion: 'Publicar avisos y comunicados para los residentes.',
       },
+      {
+        to: '/admin/comunicados',
+        titulo: 'Historial de comunicados',
+        descripcion: 'Consultar los avisos y los reportes de gasto ya publicados.',
+      },
     ],
   },
   {

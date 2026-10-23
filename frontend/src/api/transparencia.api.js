@@ -1,4 +1,4 @@
-import apiClient from './client';
+import apiClient, { mensajeDeError as mensajeDeErrorLectura } from './client';
 
 // Traduce un error de axios a un mensaje legible (prioriza el { error } del backend).
 function mensajeDeError(err) {
@@ -40,4 +40,25 @@ export async function publicarGasto(formData, onProgress) {
   }
 }
 
-// (Alondra: agrega aquí abajo tus funciones de lectura.)
+// CU-12 (Parte B): GET /transparencia?pagina=N&limite=10
+// -> 200 { publicaciones, pagina, total_paginas }. Lo usan residentes y administradores.
+// Devuelve { success, publicaciones, pagina, totalPaginas, error }.
+export async function listarGastos(pagina = 1, limite = 10) {
+  try {
+    const { data } = await apiClient.get('/transparencia', { params: { pagina, limite } });
+    if (!Array.isArray(data?.publicaciones)) {
+      return { success: false, error: 'El servidor devolvió un listado de gastos inválido.' };
+    }
+    return {
+      success: true,
+      publicaciones: data.publicaciones,
+      pagina: Number(data.pagina) || pagina,
+      totalPaginas: Number(data.total_paginas) || 0,
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: mensajeDeErrorLectura(err, { noAutorizado: 'No tienes permiso para consultar los gastos.' }),
+    };
+  }
+}

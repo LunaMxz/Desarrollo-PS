@@ -1,0 +1,408 @@
+/* ---------- CU-12 Parte B: lista de reportes de gasto ----------
+   Usa la paleta del portal; los valores por defecto permiten usar el
+   componente fuera de ComunicadosPage. */
+.lista-gastos {
+  --lg-navy: var(--navy, #131C31);
+  --lg-terracotta: var(--terracotta, #BF6B46);
+  --lg-terracotta-bright: var(--terracotta-bright, #E08D5B);
+  --lg-beige: var(--beige, #C3A37C);
+  --lg-crema: var(--crema, #F5EFE6);
+
+  color: var(--lg-crema);
+}
+
+.lista-gastos .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Estados: carga, vacío, error ---------- */
+.lista-gastos__estado {
+  color: var(--lg-beige);
+}
+
+.lista-gastos__spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  border: 3px solid #607080;
+  border-top-color: #efb27e;
+  border-radius: 50%;
+  vertical-align: middle;
+  animation: lista-gastos-giro 0.8s linear infinite;
+}
+
+.lista-gastos__vacio {
+  text-align: center;
+  padding: 36px 20px;
+  border: 1.5px dashed rgba(195, 163, 124, 0.35);
+  border-radius: 14px;
+  background: rgba(10, 16, 28, 0.45);
+  color: var(--lg-beige);
+  font-size: 14px;
+}
+
+.lista-gastos__error {
+  margin-bottom: 20px;
+  padding: 14px;
+  border: 1px solid #e53e3e;
+  border-radius: 10px;
+  background: rgba(120, 20, 20, 0.5);
+  color: #ffd4d4;
+}
+
+.lista-gastos__error p {
+  margin: 0 0 10px;
+}
+
+.lista-gastos__mas {
+  display: block;
+  margin: 4px auto 0;
+}
+
+/* ---------- Tarjeta de reporte (distinta a la de un aviso) ---------- */
+.gasto-tarjeta {
+  position: relative;
+  margin-bottom: 20px;
+  padding: 24px 24px 22px 30px;
+  border: 1px solid rgba(224, 141, 91, 0.35);
+  border-radius: 14px;
+  background: linear-gradient(150deg, rgba(191, 107, 70, 0.14) 0%, rgba(10, 16, 28, 0.6) 55%);
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+/* Franja terracota a la izquierda: identifica el reporte de un vistazo */
+.gasto-tarjeta::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 6px;
+  background: linear-gradient(180deg, var(--lg-terracotta-bright), var(--lg-terracotta));
+}
+
+.gasto-tarjeta__encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.gasto-insignia {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--lg-terracotta-bright), var(--lg-terracotta));
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.gasto-insignia::before {
+  content: '💰';
+}
+
+.gasto-tarjeta__titulo {
+  margin: 12px 0 4px;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.gasto-tarjeta__fecha {
+  margin: 0;
+  color: var(--lg-beige);
+  font-size: 13px;
+}
+
+.gasto-total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 10px 16px;
+  border: 1px solid rgba(195, 163, 124, 0.3);
+  border-radius: 12px;
+  background: rgba(10, 16, 28, 0.55);
+}
+
+.gasto-total__etiqueta {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lg-beige);
+}
+
+.gasto-total__monto {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--lg-terracotta-bright);
+  font-variant-numeric: tabular-nums;
+}
+
+.gasto-tarjeta__descripcion {
+  margin: 14px 0 0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.gasto-seccion {
+  margin: 20px 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lg-beige);
+}
+
+/* ---------- Conceptos ---------- */
+.gasto-conceptos {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gasto-concepto {
+  padding: 14px 16px;
+  border: 1px solid rgba(195, 163, 124, 0.2);
+  border-radius: 12px;
+  background: rgba(10, 16, 28, 0.5);
+}
+
+.gasto-concepto__encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.gasto-concepto__nombre {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.gasto-concepto__monto {
+  flex: 0 0 auto;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.gasto-concepto__mensaje {
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(245, 239, 230, 0.85);
+  white-space: pre-wrap;
+}
+
+/* Etiqueta de categoría: un color por categoría */
+.gasto-categoria {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--lg-beige);
+}
+
+.gasto-categoria--mantenimiento { color: #8FB8DE; }
+.gasto-categoria--limpieza { color: #7FD1B9; }
+.gasto-categoria--seguridad { color: #F2A65A; }
+.gasto-categoria--servicios { color: #C3A6E0; }
+.gasto-categoria--mejoras { color: #9AD47A; }
+.gasto-categoria--otros { color: var(--lg-beige); }
+
+/* ---------- Galería de fotos ---------- */
+.gasto-galeria {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lista-gastos .gasto-galeria__miniatura {
+  display: block;
+  width: 84px;
+  height: 84px;
+  min-height: 0;
+  padding: 0;
+  border: 1px solid rgba(195, 163, 124, 0.35);
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(10, 16, 28, 0.6);
+  cursor: zoom-in;
+  transition: transform 200ms ease, border-color 200ms ease;
+}
+
+.lista-gastos .gasto-galeria__miniatura:hover {
+  transform: translateY(-2px);
+  border-color: var(--lg-terracotta-bright);
+}
+
+.gasto-galeria__miniatura img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ---------- Comprobantes ---------- */
+.gasto-comprobantes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.gasto-comprobante {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1.5px solid rgba(195, 163, 124, 0.4);
+  border-radius: 10px;
+  color: var(--lg-crema);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 200ms ease, border-color 200ms ease;
+}
+
+.gasto-comprobante:hover {
+  background: rgba(195, 163, 124, 0.15);
+  border-color: var(--lg-beige);
+}
+
+.gasto-comprobante:focus-visible {
+  outline: 3px solid #efb27e;
+  outline-offset: 3px;
+}
+
+.gasto-comprobante__tipo {
+  padding: 1px 7px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(195, 163, 124, 0.2);
+  color: var(--lg-beige);
+}
+
+.gasto-comprobante--pdf .gasto-comprobante__tipo {
+  background: rgba(229, 62, 62, 0.25);
+  color: #FFB4B4;
+}
+
+.gasto-comprobante--imagen .gasto-comprobante__tipo {
+  background: rgba(143, 184, 222, 0.22);
+  color: #BFD9F2;
+}
+
+.gasto-generales {
+  margin-top: 6px;
+  padding-top: 4px;
+  border-top: 1px dashed rgba(195, 163, 124, 0.25);
+}
+
+/* ---------- Visor de fotos ---------- */
+.gasto-visor {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(4, 7, 12, 0.88);
+  cursor: zoom-out;
+}
+
+.gasto-visor__contenido {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: min(1000px, 100%);
+  cursor: default;
+}
+
+.gasto-visor__contenido img {
+  max-width: 100%;
+  max-height: 78vh;
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  object-fit: contain;
+}
+
+.gasto-visor__barra {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--crema, #F5EFE6);
+  font-size: 14px;
+}
+
+.gasto-visor__barra button {
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1.5px solid rgba(195, 163, 124, 0.5);
+  border-radius: 10px;
+  background: rgba(10, 16, 28, 0.7);
+  color: var(--crema, #F5EFE6);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.gasto-visor__barra button:focus-visible {
+  outline: 3px solid #efb27e;
+  outline-offset: 3px;
+}
+
+@keyframes lista-gastos-giro {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 600px) {
+  .gasto-tarjeta {
+    padding: 18px 16px 18px 22px;
+  }
+
+  .gasto-total {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .lista-gastos .gasto-galeria__miniatura {
+    width: 72px;
+    height: 72px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lista-gastos__spinner {
+    animation: none;
+  }
+
+  .lista-gastos .gasto-galeria__miniatura,
+  .gasto-comprobante {
+    transition: none;
+  }
+}

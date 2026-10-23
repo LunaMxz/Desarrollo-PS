@@ -44,13 +44,24 @@ const SECCIONES_DISPONIBLES = [
         descripcion: 'Buscar una unidad y registrar pagos de sus cargos pendientes o parciales.',
       },
     ],
-  },  {
+  },
+  {
     titulo: 'Comunicados',
     accesos: [
       {
         to: '/admin/comunicados/nuevo',
         titulo: 'Publicar comunicado',
         descripcion: 'Publicar avisos y comunicados para los residentes.',
+      },
+    ],
+  },
+  {
+    titulo: 'Transparencia',
+    accesos: [
+      {
+        to: '/admin/transparencia/nueva',
+        titulo: 'Publicar gasto',
+        descripcion: 'Registrar un gasto con sus conceptos, fotos y comprobantes.',
       },
     ],
   },

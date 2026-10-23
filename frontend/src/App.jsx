@@ -13,6 +13,7 @@ import RegistrarPagoPage from './pages/RegistrarPagoPage';
 import MiEstadoCuentaPage from './pages/MiEstadoCuentaPage';
 import PublicarComunicadoPage from './pages/PublicarComunicadoPage';
 import ComunicadosPage from './pages/ComunicadosPage';
+import PublicarGastoPage from './pages/PublicarGastoPage';
 
 // Referenciada por ProtectedRoute cuando el rol del usuario no tiene permiso
 const Unauthorized = () => <h1>No tienes permiso para ver esta página</h1>;
@@ -28,19 +29,19 @@ export default function App() {
           {/* Ruta de acceso denegado por rol */}
           <Route path="/unauthorized" element={<Unauthorized />} />
 
-          {/* Rutas Privadas */}
+          {/* Rutas Privadas Generales (autenticados) */}
           <Route element={<ProtectedRoute />}>
             <Route path="/residentes" element={<ResidenteHomePage />} />
             <Route path="/incidencias/reportar" element={<ReportarIncidenciaPage />} />
           </Route>
 
-          {/* Rutas exclusivas del residente (el backend también rechaza a otros roles) */}
+          {/* Rutas exclusivas del residente */}
           <Route element={<ProtectedRoute rolesPermitidos={['residente']} />}>
             <Route path="/residentes/estado-cuenta" element={<MiEstadoCuentaPage />} />
             <Route path="/residentes/comunicados" element={<ComunicadosPage />} />
           </Route>
 
-          {/* Rutas Privadas restringidas por Rol */}
+          {/* Rutas exclusivas del administrador */}
           <Route element={<ProtectedRoute rolesPermitidos={['admin']} />}>
             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
             <Route path="/admin/residentes/alta" element={<AltaResidentePage />} />
@@ -49,6 +50,7 @@ export default function App() {
             <Route path="/admin/cargos/generar" element={<GenerarCargosPage />} />
             <Route path="/admin/pagos/registrar" element={<RegistrarPagoPage />} />
             <Route path="/admin/comunicados/nuevo" element={<PublicarComunicadoPage />} />
+            <Route path="/admin/transparencia/nueva" element={<PublicarGastoPage />} />
           </Route>
 
           {/* Redirección por defecto */}

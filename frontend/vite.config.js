@@ -9,6 +9,9 @@ export default defineConfig({
     setupFiles: ['test/setup.js'],
     // Cada test arranca con los mocks limpios (sin llamadas ni implementaciones previas)
     mockReset: true,
+    // Las pruebas que simulan escritura con user-event pueden pasar de 5 s (el valor por defecto)
+    // en máquinas lentas o cargadas; 15 s evita fallos falsos sin ocultar pruebas colgadas.
+    testTimeout: 15000,
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{js,jsx}'],

@@ -12,6 +12,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import RegistrarPagoPage from './pages/RegistrarPagoPage';
 import MiEstadoCuentaPage from './pages/MiEstadoCuentaPage';
 import PublicarComunicadoPage from './pages/PublicarComunicadoPage';
+import ComunicadosPage from './pages/ComunicadosPage';
 import PublicarGastoPage from './pages/PublicarGastoPage';
 
 // Referenciada por ProtectedRoute cuando el rol del usuario no tiene permiso
@@ -37,6 +38,7 @@ export default function App() {
           {/* Rutas exclusivas del residente */}
           <Route element={<ProtectedRoute rolesPermitidos={['residente']} />}>
             <Route path="/residentes/estado-cuenta" element={<MiEstadoCuentaPage />} />
+            <Route path="/residentes/comunicados" element={<ComunicadosPage />} />
           </Route>
 
           {/* Rutas exclusivas del administrador */}

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { listarComunicados } from '../api/comunicados.api';
 import AdminHeader from '../components/AdminHeader';
+import ListaGastos from '../components/ListaGastos';
 import { obtenerCieloParaHora, obtenerProporcionLuces } from '../utils/coloresHorario';
 import './ComunicadosPage.css';
 
@@ -42,6 +43,9 @@ export default function ComunicadosPage() {
   const proporcionLuces = useMemo(() => obtenerProporcionLuces(horaActual), [horaActual]);
 
   const [pestana, setPestana] = useState('avisos');
+  // ListaGastos se monta la primera vez que se abre la pestaña y se conserva después
+  const [transparenciaAbierta, setTransparenciaAbierta] = useState(false);
+  if (pestana === 'transparencia' && !transparenciaAbierta) setTransparenciaAbierta(true);
   const [comunicados, setComunicados] = useState([]);
   const [pagina, setPagina] = useState(1);
   const [cargando, setCargando] = useState(true);
@@ -163,9 +167,8 @@ export default function ComunicadosPage() {
         </section>
         <section role="tabpanel" id="panel-transparencia" aria-labelledby="tab-transparencia"
           hidden={pestana !== 'transparencia'} tabIndex={0}>
-          {/* CU-12 Parte B: sustituir este texto por ListaGastos. El componente
-              administrará su carga y paginación sin compartir el estado de Avisos. */}
-          <p>Próximamente podrás consultar aquí los reportes de gastos.</p>
+          {/* CU-12 Parte B: maneja su propia carga y paginación, sin compartir el estado de Avisos */}
+          {transparenciaAbierta && <ListaGastos />}
         </section>
         </div>
       </main>

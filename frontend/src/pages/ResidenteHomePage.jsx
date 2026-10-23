@@ -3,10 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './ResidenteHomePage.css';
 
-const SECCIONES_PROXIMAMENTE = [
-  { titulo: 'Comunicados', descripcion: 'Avisos y comunicados publicados por la administración.' },
-];
-
 // Estructuras para el skyline
 const ALTURAS_FONDO = [40, 65, 50, 80, 60, 90, 55, 75, 45, 68, 52];
 const TORRES_FRONTAL = [
@@ -193,13 +189,14 @@ export default function ResidenteHomePage() {
             <p>Consulta tus cargos, el historial de pagos y tu saldo actual.</p>
           </button>
 
-          {SECCIONES_PROXIMAMENTE.map((seccion) => (
-            <div key={seccion.titulo} className="residente-home-tarjeta">
-              <span className="residente-home-tarjeta__badge">Próximamente…</span>
-              <h3>{seccion.titulo}</h3>
-              <p>{seccion.descripcion}</p>
-            </div>
-          ))}
+          <button
+            type="button"
+            className="residente-home-tarjeta residente-home-tarjeta--activa"
+            onClick={() => navigate('/residentes/comunicados')}
+          >
+            <h3>Comunicados</h3>
+            <p>Consulta los avisos y reportes de gastos de la administración.</p>
+          </button>
         </div>
       </main>
     </div>

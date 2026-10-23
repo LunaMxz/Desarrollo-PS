@@ -1,0 +1,149 @@
+/* ---------- Pantalla: variables y layout ---------- */
+.comunicados-page {
+  --navy: #131C31;
+  --charcoal: #383E45;
+  --terracotta: #BF6B46;
+  --terracotta-bright: #E08D5B;
+  --beige: #C3A37C;
+  --crema: #F5EFE6;
+
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  font-family: 'Inter', -apple-system, sans-serif;
+  color: var(--crema);
+  background-color: var(--navy);
+}
+
+/* ---------- Fondo: cielo dinámico y skyline ----------
+   Todo va acotado a .comunicados-page para no chocar con las
+   clases del mismo nombre de otras páginas.
+   Capas (z-index): cielo 0 · skyline 1-2 · scrim/glow 3 · grano 4 · contenido 5 */
+.comunicados-page .fondo-cielo {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(180deg, var(--sky-top, #080d18) 0%, var(--sky-bot, #101a2c) 100%);
+  transition: background 1.2s ease;
+}
+
+.comunicados-page .fondo-skyline-back {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  height: 26vh;
+  min-height: 160px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  filter: blur(2.5px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.comunicados-page .bloque-back {
+  flex: 1 1 0;
+  background: rgba(6, 9, 15, 0.7);
+  border-radius: 3px 3px 0 0;
+}
+
+.comunicados-page .fondo-skyline {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  height: 34vh;
+  min-height: 220px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  padding: 0 2vw;
+  filter: blur(0.3px);
+  pointer-events: none;
+}
+
+.comunicados-page .torre {
+  flex: 1 1 0;
+  display: grid;
+  gap: 4px;
+  padding: 8px 6px;
+  background: #070a10;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.comunicados-page .ventana {
+  width: 100%;
+  height: 100%;
+  border-radius: 1.5px;
+  background: rgba(255, 255, 255, 0.035);
+  transition: background 0.5s ease, box-shadow 0.5s ease;
+}
+
+.comunicados-page .ventana.lit {
+  background: linear-gradient(160deg, var(--terracotta-bright), var(--beige));
+  box-shadow: 0 0 6px rgba(224, 141, 91, 0.6);
+}
+
+.comunicados-page .fondo-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(11, 18, 32, 0.7) 0%,
+    rgba(11, 18, 32, 0.3) 35%,
+    rgba(11, 18, 32, 0.6) 65%,
+    rgba(11, 18, 32, 0.95) 100%
+  );
+}
+
+.comunicados-page .fondo-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  transition: background 1.2s ease;
+  mix-blend-mode: screen;
+}
+
+.comunicados-page .grain {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.comunicados-contenido { position: relative; z-index: 5; width: 100%; max-width: 920px; margin: 0 auto; padding: 40px 20px 64px; box-sizing: border-box; }
+.comunicados-panel { min-width: 0; padding: 28px; border: 1px solid rgba(195, 163, 124, 0.25); border-top-color: rgba(195, 163, 124, 0.4); border-radius: 16px; background: linear-gradient(150deg, rgba(18, 26, 43, 0.82), rgba(11, 18, 32, 0.92)); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); }
+.comunicados-titulo { margin: 0 0 6px; font-family: 'Fraunces', Georgia, serif; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; }
+.comunicados-subtitulo { margin: 0 0 24px; color: var(--beige); font-size: 14px; line-height: 1.55; }
+.comunicados-tabs { display: flex; gap: 12px; margin-bottom: 24px; border-bottom: 1px solid rgba(195, 163, 124, 0.2); padding-bottom: 16px; }
+.comunicados-contenido button { min-height: 44px; padding: 10px 18px; border: 1.5px solid rgba(195, 163, 124, 0.4); border-radius: 10px; background: transparent; color: var(--crema); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: background-color 200ms ease, border-color 200ms ease; }
+.comunicados-contenido button:hover { background: rgba(195, 163, 124, 0.15); border-color: var(--beige); }
+.comunicados-tabs button[aria-selected='true'] { background: linear-gradient(135deg, rgba(191, 107, 70, 0.35), rgba(191, 107, 70, 0.15)); border-color: var(--terracotta-bright); color: var(--crema); }
+.comunicados-contenido :focus-visible { outline: 3px solid #efb27e; outline-offset: 4px; }
+.comunicado-tarjeta { margin-bottom: 20px; padding: 24px; background: rgba(10, 16, 28, 0.45); border: 1px solid rgba(195, 163, 124, 0.2); border-radius: 14px; overflow-wrap: anywhere; }
+.comunicado-tarjeta h2 { margin: 14px 0 8px; font-family: 'Fraunces', Georgia, serif; }
+.comunicado-tarjeta time { color: var(--beige); font-size: 13px; }
+.comunicado-insignia { display: inline-block; border: 1px solid rgba(195, 163, 124, 0.35); border-radius: 20px; background: rgba(195, 163, 124, 0.1); color: var(--beige); padding: 4px 10px; font-size: 12px; }
+.comunicado-texto { white-space: pre-wrap; line-height: 1.7; margin-bottom: 0; }
+.comunicados-error { padding: 14px; border: 1px solid #e53e3e; background: rgba(120, 20, 20, 0.5); color: #ffd4d4; border-radius: 10px; }
+.comunicados-vacio { text-align: center; padding: 36px 20px; border: 1.5px dashed rgba(195, 163, 124, 0.35); border-radius: 14px; background: rgba(10, 16, 28, 0.45); color: var(--beige); font-size: 14px; line-height: 1.55; }
+.comunicados-spinner { display: inline-block; width: 18px; height: 18px; margin-right: 10px; border: 3px solid #607080; border-top-color: #efb27e; border-radius: 50%; vertical-align: middle; animation: comunicados-giro 0.8s linear infinite; }
+@keyframes comunicados-giro { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .comunicados-spinner { animation: none; } .comunicados-page .fondo-cielo, .comunicados-page .ventana, .comunicados-contenido button { transition: none; } }
+@media (max-width: 600px) { .comunicados-contenido { padding: 24px 16px 48px; } .comunicados-panel { padding: 22px 18px; } .comunicado-tarjeta { padding: 18px; } .comunicados-tabs button { padding: 12px; flex: 1; } }

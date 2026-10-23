@@ -8,13 +8,3 @@ export async function insertarComunicado({ titulo, contenido, autorId }) {
   );
   return result.rows[0];
 }
-
-// CU-11: del más reciente al más antiguo (id DESC desempata si coinciden en fecha)
-export async function listarComunicados() {
-  const result = await pool.query(
-    `SELECT id, titulo, contenido, autor_id, fecha_publicacion
-     FROM comunicados
-     ORDER BY fecha_publicacion DESC, id DESC`
-  );
-  return result.rows;
-}

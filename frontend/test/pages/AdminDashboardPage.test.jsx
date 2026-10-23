@@ -23,17 +23,17 @@ describe('AdminDashboardPage', () => {
     ['Gestión de incidencias', '/admin/incidencias'],
     ['Generar cargos del mes', '/admin/cargos/generar'],
     ['Registrar pago', '/admin/pagos/registrar'],
-    ['Publicar comunicado', '/admin/comunicados/nuevo'],
   ])('tiene acceso a "%s"', (titulo, ruta) => {
     renderPagina(<AdminDashboardPage />);
 
     expect(screen.getByRole('link', { name: new RegExp(titulo) })).toHaveAttribute('href', ruta);
   });
 
-  it('no muestra la sección "Próximamente" cuando no hay pendientes', () => {
+  it('muestra comunicados como próximamente (sin enlace)', () => {
     renderPagina(<AdminDashboardPage />);
 
-    expect(screen.queryByText('Próximamente')).not.toBeInTheDocument();
+    expect(screen.getByText('Próximamente')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /Comunicados/ })).not.toBeInTheDocument();
   });
 
   it('el dashboard no muestra el enlace de volver', () => {

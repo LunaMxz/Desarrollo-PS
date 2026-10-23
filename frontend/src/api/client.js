@@ -23,8 +23,7 @@ apiClient.interceptors.request.use((config) => {
 // - noAutorizado: mensaje por defecto para 401/403
 // - noEncontrado: mensaje por defecto para 404
 // Si el backend envía { error }, ese texto tiene prioridad.
-// Se exporta para que los archivos api/*.api.js de cada módulo den los mismos mensajes.
-export function mensajeDeError(err, { noAutorizado, noEncontrado } = {}) {
+function mensajeDeError(err, { noAutorizado, noEncontrado } = {}) {
   if (err.code === 'ECONNABORTED') {
     return 'El servidor tardó demasiado en responder. Intente más tarde.';
   }

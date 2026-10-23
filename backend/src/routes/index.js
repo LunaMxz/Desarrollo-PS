@@ -6,8 +6,7 @@ import incidenciasRoutes from './incidencias.routes.js'; // <- CU-03 / CU-08 / C
 import pagosRoutes from './pagos.routes.js'; // <- CU-02
 import cargosRoutes from './cargos.routes.js'; // <- CU-06
 import unidadesRoutes from './unidades.routes.js'; // <- CU-07
-import comunicadosRoutes from './comunicados.routes.js'; // <- CU-10 / CU-11
-import transparenciaRoutes from './transparencia.routes.js'; // <- CU-12
+import comunicadosRoutes from './comunicados.routes.js'; // <- CU-10
 const router = Router();
 router.use('/health', healthRoutes);
 router.use('/auth', authRoutes);
@@ -17,5 +16,4 @@ router.use('/pagos', pagosRoutes);
 router.use('/cargos', cargosRoutes);
 router.use('/unidades', unidadesRoutes);
 router.use('/comunicados', comunicadosRoutes);
-router.use('/transparencia', transparenciaRoutes);
 export default router;

@@ -118,3 +118,56 @@ export async function listarArchivosDePublicaciones(publicacionIds) {
   );
   return result.rows;
 }
+
+// CU-13: las fechas del balance llegan como 'YYYY-MM-DD'. El mes es el rango
+// [inicio, fin): fin es el primer día del mes siguiente (no se usa LIKE).
+export async function sumarIngresosDelMes({ inicio, fin }) {
+  const result = await pool.query(
+    `SELECT COALESCE(SUM(monto), 0) AS total
+     FROM pagos
+     WHERE fecha_pago >= $1::date AND fecha_pago < $2::date`,
+    [inicio, fin]
+  );
+  return result.rows[0].total;
+}
+
+export async function sumarEgresosDelMes({ inicio, fin }) {
+  const result = await pool.query(
+    `SELECT COALESCE(SUM(cg.monto), 0) AS total
+     FROM conceptos_gasto cg
+     JOIN publicaciones_transparencia p ON p.id = cg.publicacion_id
+     WHERE p.fecha_gasto >= $1::date AND p.fecha_gasto < $2::date`,
+    [inicio, fin]
+  );
+  return result.rows[0].total;
+}
+
+// Solo aparecen las categorías que tuvieron gastos en el mes
+export async function sumarEgresosPorCategoria({ inicio, fin }) {
+  const result = await pool.query(
+    `SELECT cg.categoria, COALESCE(SUM(cg.monto), 0) AS total
+     FROM conceptos_gasto cg
+     JOIN publicaciones_transparencia p ON p.id = cg.publicacion_id
+     WHERE p.fecha_gasto >= $1::date AND p.fecha_gasto < $2::date
+     GROUP BY cg.categoria
+     ORDER BY total DESC, cg.categoria`,
+    [inicio, fin]
+  );
+  return result.rows;
+}
+
+// Todo lo cobrado menos todo lo gastado hasta el fin del mes elegido
+export async function obtenerSaldoAcumulado({ fin }) {
+  const result = await pool.query(
+    `SELECT
+       (SELECT COALESCE(SUM(monto), 0)
+        FROM pagos
+        WHERE fecha_pago < $1::date)
+     - (SELECT COALESCE(SUM(cg.monto), 0)
+        FROM conceptos_gasto cg
+        JOIN publicaciones_transparencia p ON p.id = cg.publicacion_id
+        WHERE p.fecha_gasto < $1::date) AS saldo`,
+    [fin]
+  );
+  return result.rows[0].saldo;
+}

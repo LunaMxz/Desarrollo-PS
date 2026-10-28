@@ -77,14 +77,19 @@ export function leerMinMeses(valor) {
   }
   return numero;
 }
+// CU-14: normaliza el adeudo de cada unidad a Number
+function normalizarUnidades(unidades) {
+  return unidades.map((u) => ({ ...u, adeudo: Number(u.adeudo) }));
+}
 export async function obtenerReporteAdeudo({ minMeses } = {}) {
   const minMesesNum = leerMinMeses(minMeses);
-  return obtenerAdeudoPorUnidad({ minMeses: minMesesNum });
+  const unidades = await obtenerAdeudoPorUnidad({ minMeses: minMesesNum });
+  return normalizarUnidades(unidades);
 }
 export async function obtenerTotalAdeudo() {
   const { total, unidades } = await obtenerTotalPorCobrar();
   return {
     total_por_cobrar: Number(total),
-    unidades,
+    unidades: normalizarUnidades(unidades),
   };
 }

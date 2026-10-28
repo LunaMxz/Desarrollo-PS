@@ -1,5 +1,4 @@
-import { generarCargosMensuales } from '../services/cargos.service.js';
-
+import { generarCargosMensuales, obtenerReporteAdeudo, obtenerTotalAdeudo, } from '../services/cargos.service.js';
 // CU-06: POST /cargos/generar
 export async function generarCargosHandler(req, res, next) {
   try {
@@ -26,6 +25,22 @@ export async function generarCargosHandler(req, res, next) {
       cargos,
       omitidas,
     });
+  } catch (err) {
+    next(err);
+  }
+}
+export async function reporteAdeudoHandler(req, res, next) {
+  try {
+    const unidades = await obtenerReporteAdeudo({ minMeses: req.query.min_meses });
+    res.json({ unidades });
+  } catch (err) {
+    next(err);
+  }
+}
+export async function totalAdeudoHandler(req, res, next) {
+  try {
+    const total = await obtenerTotalAdeudo();
+    res.json(total);
   } catch (err) {
     next(err);
   }

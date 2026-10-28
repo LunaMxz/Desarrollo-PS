@@ -1,4 +1,4 @@
-import { insertarCargo } from '../repositories/cargos.repository.js';
+import { insertarCargo, obtenerAdeudoPorUnidad, obtenerTotalPorCobrar } from '../repositories/cargos.repository.js';
 import { obtenerUnidadesConResidenteActivo } from '../repositories/unidades.repository.js';
 
 const CONCEPTO_DEFAULT = 'Cuota mensual';
@@ -65,4 +65,31 @@ export async function generarCargosMensuales({ monto, concepto } = {}) {
     throw error;
   }
   return { periodo, cargos, omitidas };
+}
+// CU-14: obtiene el reporte de adeudo por unidad, opcionalmente filtrado por min_meses
+export function leerMinMeses(valor) {
+  if (valor === undefined || valor === '') return undefined;
+  const numero = Number(valor);
+  if (!Number.isSafeInteger(numero) || numero < 1) {
+    const error = new Error('El parámetro "min_meses" debe ser un entero mayor a 0');
+    error.status = 400;
+    throw error;
+  }
+  return numero;
+}
+// CU-14: normaliza el adeudo de cada unidad a Number
+function normalizarUnidades(unidades) {
+  return unidades.map((u) => ({ ...u, adeudo: Number(u.adeudo) }));
+}
+export async function obtenerReporteAdeudo({ minMeses } = {}) {
+  const minMesesNum = leerMinMeses(minMeses);
+  const unidades = await obtenerAdeudoPorUnidad({ minMeses: minMesesNum });
+  return normalizarUnidades(unidades);
+}
+export async function obtenerTotalAdeudo() {
+  const { total, unidades } = await obtenerTotalPorCobrar();
+  return {
+    total_por_cobrar: Number(total),
+    unidades: normalizarUnidades(unidades),
+  };
 }

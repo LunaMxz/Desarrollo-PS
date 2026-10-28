@@ -66,3 +66,21 @@ export async function generarCargosMensuales({ monto, concepto } = {}) {
   }
   return { periodo, cargos, omitidas };
 }
+// CU-14: obtiene el reporte de adeudo por unidad, opcionalmente filtrado por min_meses
+export function leerMinMeses(valor) {
+  if (valor === undefined || valor === '') return undefined;
+  const numero = Number(valor);
+  if (!Number.isSafeInteger(numero) || numero < 1) {
+    const error = new Error('El parámetro "min_meses" debe ser un entero mayor a 0');
+    error.status = 400;
+    throw error;
+  }
+  return numero;
+}
+export async function obtenerReporteAdeudo({ minMeses } = {}) {
+  const minMesesNum = leerMinMeses(minMeses);
+  return obtenerAdeudoPorUnidad({ minMeses: minMesesNum });
+}
+export async function obtenerTotalAdeudo() {
+  return obtenerTotalPorCobrar();
+}

@@ -10,7 +10,9 @@ export async function insertarCargo({ unidad_id, concepto, monto, periodo }) {
   return result.rows[0];
 }
 // CU-14: Consulta para obtener el adeudo por unidad, incluyendo el correo del residente y la cantidad de meses adeudados
-export async function obtenerAdeudoPorUnidad() {
+export async function obtenerAdeudoPorUnidad({minMeses}={}) {
+  const having= minMeses !== undefined ? `HAVING COUNT(c.id) >= $1` : '';
+  const params = minMeses !== undefined ? [minMeses] : [];
   const result = await pool.query(
     `SELECT
        u.id                         AS unidad_id,
@@ -33,7 +35,9 @@ export async function obtenerAdeudoPorUnidad() {
       AND residente.activo = TRUE
      WHERE c.estado IN ('pendiente', 'parcial')
      GROUP BY u.id, u.identificador, residente.correo
-     ORDER BY adeudo DESC`
+     ${having}
+     ORDER BY adeudo DESC`,
+    params
   );
   return result.rows;
 }
@@ -53,8 +57,5 @@ export async function obtenerTotalPorCobrar() {
      WHERE c.estado IN ('pendiente', 'parcial')`
   );
   const fila = result.rows[0];
-  return {
-    total: fila.total,
-    unidades: fila.unidades,
-  };
+  return {total: fila.total, unidades: fila.unidades,};
 }

@@ -4,7 +4,12 @@ import {
   contarPublicaciones,
   listarConceptosDePublicaciones,
   listarArchivosDePublicaciones,
+  sumarIngresosDelMes,
+  sumarEgresosDelMes,
+  sumarEgresosPorCategoria,
+  obtenerSaldoAcumulado,
 } from '../repositories/transparencia.repository.js';
+import { obtenerTotalPorCobrar } from '../repositories/cargos.repository.js';
 
 const CATEGORIAS_GASTO = ['mantenimiento', 'limpieza', 'seguridad', 'servicios', 'mejoras', 'otros'];
 const MAX_TEXTO = 150; // titulo, nombre del concepto y nombre_original son VARCHAR(150) en la BD
@@ -188,5 +193,76 @@ export async function listarTransparencia({ pagina = 1, limite = 10, categoria }
     publicaciones,
     pagina,
     total_paginas: Math.ceil(Number(filas[0].total_registros) / limite),
+  };
+}
+
+// CU-13: anio y mes pueden llegar como texto (query string) o como número (mes actual)
+function leerAnio(valor) {
+  const texto = String(valor).trim();
+  if (!/^[1-9]\d{3}$/.test(texto)) {
+    throw errorValidacion('El parámetro "anio" debe ser un año de 4 dígitos (ej. 2026)');
+  }
+  return Number(texto);
+}
+
+function leerMes(valor) {
+  const texto = String(valor).trim();
+  const mes = Number(texto);
+  if (!/^\d{1,2}$/.test(texto) || mes < 1 || mes > 12) {
+    throw errorValidacion('El parámetro "mes" debe ser un número entero entre 1 y 12');
+  }
+  return mes;
+}
+
+// Rango [inicio, fin) del mes: fin es el primer día del mes siguiente
+function rangoDelMes(anio, mes) {
+  const aFecha = (a, m) => `${a}-${String(m).padStart(2, '0')}-01`;
+  return {
+    inicio: aFecha(anio, mes),
+    fin: mes === 12 ? aFecha(anio + 1, 1) : aFecha(anio, mes + 1),
+  };
+}
+
+// Evita restos de punto flotante al restar montos (1500.10 - 300.05 = 1200.0499...)
+function redondearCentavos(valor) {
+  return Math.round(valor * 100) / 100;
+}
+
+// CU-13: balance financiero de un mes. Nada se captura a mano:
+// ingresos salen de pagos, egresos de conceptos_gasto y "por cobrar" de cargos (CU-14).
+// "por cobrar" es el adeudo actual (no depende del mes) y solo lo recibe el admin.
+export async function obtenerBalance({ anio, mes, esAdmin = false } = {}) {
+  const anioNum = leerAnio(anio);
+  const mesNum = leerMes(mes);
+  const rango = rangoDelMes(anioNum, mesNum);
+
+  const [ingresosTexto, egresosTexto, categorias, saldoTexto, porCobrar] = await Promise.all([
+    sumarIngresosDelMes(rango),
+    sumarEgresosDelMes(rango),
+    sumarEgresosPorCategoria(rango),
+    obtenerSaldoAcumulado(rango),
+    esAdmin ? obtenerTotalPorCobrar() : null,
+  ]);
+
+  // PostgreSQL regresa NUMERIC como texto
+  const ingresos = Number(ingresosTexto);
+  const egresos = Number(egresosTexto);
+  const balance = {
+    anio: anioNum,
+    mes: mesNum,
+    ingresos,
+    egresos,
+    saldo_mes: redondearCentavos(ingresos - egresos),
+    saldo_acumulado: Number(saldoTexto),
+    egresos_por_categoria: categorias.map((fila) => ({
+      categoria: fila.categoria,
+      total: Number(fila.total),
+    })),
+  };
+  if (!esAdmin) return balance;
+  return {
+    ...balance,
+    por_cobrar: Number(porCobrar.total),
+    unidades_con_adeudo: porCobrar.unidades.length,
   };
 }

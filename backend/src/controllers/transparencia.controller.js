@@ -1,4 +1,4 @@
-import { publicarTransparencia, listarTransparencia } from '../services/transparencia.service.js';
+import { publicarTransparencia, listarTransparencia, obtenerBalance } from '../services/transparencia.service.js';
 import { eliminarArchivos } from '../middlewares/upload.middleware.js';
 
 const LIMITE_DEFAULT = 10;
@@ -64,6 +64,22 @@ export async function listarTransparenciaHandler(req, res, next) {
       categoria: req.query.categoria || undefined,
     });
     res.json(resultado);
+  } catch (err) {
+    next(err);
+  }
+}
+
+// CU-13: GET /transparencia/balance?anio=2026&mes=10
+// Si no vienen anio o mes se usa el mes actual. La validación de los valores está en el service.
+export async function obtenerBalanceHandler(req, res, next) {
+  try {
+    const hoy = new Date();
+    const balance = await obtenerBalance({
+      anio: req.query.anio || hoy.getFullYear(),
+      mes: req.query.mes || hoy.getMonth() + 1,
+      esAdmin: req.user.rol === 'admin',
+    });
+    res.json(balance);
   } catch (err) {
     next(err);
   }

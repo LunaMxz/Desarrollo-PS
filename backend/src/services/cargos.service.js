@@ -1,4 +1,4 @@
-import { insertarCargo } from '../repositories/cargos.repository.js';
+import { insertarCargo, obtenerAdeudoPorUnidad, obtenerTotalPorCobrar } from '../repositories/cargos.repository.js';
 import { obtenerUnidadesConResidenteActivo } from '../repositories/unidades.repository.js';
 
 const CONCEPTO_DEFAULT = 'Cuota mensual';

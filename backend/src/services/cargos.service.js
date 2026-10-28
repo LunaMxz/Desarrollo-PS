@@ -82,5 +82,9 @@ export async function obtenerReporteAdeudo({ minMeses } = {}) {
   return obtenerAdeudoPorUnidad({ minMeses: minMesesNum });
 }
 export async function obtenerTotalAdeudo() {
-  return obtenerTotalPorCobrar();
+  const { total, unidades } = await obtenerTotalPorCobrar();
+  return {
+    total_por_cobrar: Number(total),
+    unidades,
+  };
 }

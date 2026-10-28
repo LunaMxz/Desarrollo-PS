@@ -46,7 +46,7 @@ export async function obtenerTotalPorCobrar() {
   const result = await pool.query(
     `SELECT
        COALESCE(SUM(c.monto - COALESCE(pagado.total_abonado, 0)), 0)::numeric AS total,
-       COUNT(DISTINCT c.unidad_id)::int                                      AS unidades
+       COUNT(DISTINCT c.unidad_id)::int                                      AS unidades_count
      FROM cargos c
      LEFT JOIN (
        SELECT cargo_id, SUM(monto) AS total_abonado
@@ -57,5 +57,9 @@ export async function obtenerTotalPorCobrar() {
      WHERE c.estado IN ('pendiente', 'parcial')`
   );
   const fila = result.rows[0];
-  return {total: fila.total, unidades: fila.unidades,};
+  if (fila.unidades_count === 0) {
+    return { total: '0', unidades: [] };
+  }
+  const unidades = await obtenerAdeudoPorUnidad();
+  return { total: fila.total, unidades };
 }

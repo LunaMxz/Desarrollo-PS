@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import apiClient, { listarResidentes } from '../api/client';
 import AdminHeader from '../components/AdminHeader';
 import { obtenerCieloParaHora, obtenerProporcionLuces } from '../utils/coloresHorario';
@@ -29,6 +30,8 @@ export default function RegistrarPagoPage() {
   const [hora, setHora] = useState(() => new Date().getHours());
   const peticion = useRef(0);
   const enviando = useRef(false);
+  const { state } = useLocation();
+  const preseleccion = useRef(state?.unidadId ?? null);
   const cargo = cargos.find((item) => item.id === cargoId);
   const cielo = obtenerCieloParaHora(hora);
 
@@ -81,6 +84,9 @@ export default function RegistrarPagoPage() {
       if (solicitud === peticion.current) setCargando(false);
     }
   }
+
+  // CU-14: si llegó con unidadId, selecciona esa unidad cuando ya se cargaron las unidades
+  useEffect(() => {  if (preseleccion.current == null || unidades.length === 0) return;  const encontrada = unidades.find((u) => u.id === Number(preseleccion.current));  preseleccion.current = null;  if (encontrada) seleccionarUnidad(encontrada);}, [unidades]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function registrar(event) {
     event.preventDefault();

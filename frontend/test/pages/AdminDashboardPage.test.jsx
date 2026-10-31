@@ -24,6 +24,7 @@ describe('AdminDashboardPage', () => {
     ['Generar cargos del mes', '/admin/cargos/generar'],
     ['Registrar pago', '/admin/pagos/registrar'],
     ['Publicar comunicado', '/admin/comunicados/nuevo'],
+    ['Historial de comunicados', '/admin/comunicados'],
   ])('tiene acceso a "%s"', (titulo, ruta) => {
     renderPagina(<AdminDashboardPage />);
 

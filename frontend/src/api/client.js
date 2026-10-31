@@ -273,4 +273,20 @@ export async function obtenerMiEstadoCuenta() {
   }
 }
 
+/* ---------- Morosidad (CU-14) ---------- */
+// GET /cargos/morosidad?min_meses=N -> { unidades: [{ unidad_id, unidad_identificador, residente_correo, meses_adeudados, adeudo }] }. Devuelve { success, unidades, error }.
+export async function obtenerMorosidad(minMeses) {
+  try {
+    const { data } = await apiClient.get('/cargos/morosidad', {
+      params: minMeses ? { min_meses: minMeses } : {},
+    });
+    return { success: true, unidades: Array.isArray(data?.unidades) ? data.unidades : [] };
+  } catch (err) {
+    return {
+      success: false,
+      error: mensajeDeError(err, { noAutorizado: 'No tienes permiso para consultar la morosidad.' }),
+    };
+  }
+}
+
 export default apiClient;

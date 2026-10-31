@@ -17,6 +17,7 @@ async function llenar(user, { titulo = 'Fuga de agua', descripcion = 'Hay agua e
   if (ubicacion) await user.type(screen.getByLabelText('Ubicación'), ubicacion);
 }
 
+// delay: null escribe sin pausas entre teclas: las pruebas no dependen de qué tan cargada esté la máquina
 function enviar(user) {
   return user.click(screen.getByRole('button', { name: 'Reportar incidencia' }));
 }
@@ -28,7 +29,7 @@ beforeEach(() => {
 describe('CU-03 ReportarIncidenciaPage', () => {
   it('envía la incidencia (sin espacios sobrantes) y limpia el formulario', async () => {
     vi.mocked(apiClient.post).mockResolvedValue({ data: {} });
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderPagina(<ReportarIncidenciaPage />);
 
     await llenar(user, { titulo: '  Fuga de agua  ' });
@@ -44,7 +45,7 @@ describe('CU-03 ReportarIncidenciaPage', () => {
   });
 
   it('título y descripción son obligatorios', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderPagina(<ReportarIncidenciaPage />);
 
     await enviar(user);
@@ -55,7 +56,7 @@ describe('CU-03 ReportarIncidenciaPage', () => {
   });
 
   it('el error de un campo desaparece al corregirlo', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderPagina(<ReportarIncidenciaPage />);
 
     await enviar(user);
@@ -72,7 +73,7 @@ describe('CU-03 ReportarIncidenciaPage', () => {
     [{ response: { status: 500, data: {} } }, 'Ocurrió un error inesperado. Intenta más tarde.'],
   ])('si falla el envío muestra el error y conserva lo capturado (%#)', async (falla, mensaje) => {
     vi.mocked(apiClient.post).mockRejectedValue(Object.assign(new Error('falla'), falla));
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderPagina(<ReportarIncidenciaPage />);
 
     await llenar(user);
@@ -83,7 +84,7 @@ describe('CU-03 ReportarIncidenciaPage', () => {
   });
 
   it('cancelar regresa a la pantalla anterior', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderPagina(<ReportarIncidenciaPage />, { ruta: '/incidencias/reportar' });
 
     await user.click(screen.getByRole('button', { name: 'Cancelar' }));

@@ -43,6 +43,11 @@ const SECCIONES_DISPONIBLES = [
         titulo: 'Registrar pago',
         descripcion: 'Buscar una unidad y registrar pagos de sus cargos pendientes o parciales.',
       },
+      {
+        to: '/admin/morosidad',
+        titulo: 'Reporte de morosidad',
+        descripcion: 'Consultar unidades con adeudo e iniciar el cobro.',
+      },
     ],
   },
   {
@@ -52,6 +57,11 @@ const SECCIONES_DISPONIBLES = [
         to: '/admin/comunicados/nuevo',
         titulo: 'Publicar comunicado',
         descripcion: 'Publicar avisos y comunicados para los residentes.',
+      },
+      {
+        to: '/admin/comunicados',
+        titulo: 'Historial de comunicados',
+        descripcion: 'Consultar los avisos y los reportes de gasto ya publicados.',
       },
     ],
   },

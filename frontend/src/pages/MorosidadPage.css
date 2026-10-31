@@ -1,0 +1,52 @@
+/* Fondo, variables y tarjeta base vienen de AdminDashboardPage.css y GenerarCargosPage.css */
+.mo-card { max-width: 860px; min-width: 0; }
+
+.mo-resumen { display: flex; gap: 16px; flex-wrap: wrap; margin: 0 0 20px; }
+.mo-resumen div {
+  flex: 1 1 200px; padding: 16px 18px; border-radius: 14px;
+  border: 1px solid var(--terracotta-bright);
+  background: linear-gradient(135deg, rgba(191, 107, 70, 0.28) 0%, rgba(191, 107, 70, 0.1) 100%);
+}
+.mo-resumen dt { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--beige); }
+.mo-resumen dd { margin: 4px 0 0; font-family: 'Fraunces', Georgia, serif; font-size: 30px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.mo-filtros { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+.mo-chip {
+  padding: 8px 16px; border-radius: 999px; cursor: pointer;
+  border: 1.5px solid rgba(195, 163, 124, 0.4); background: transparent; color: var(--crema);
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  transition: background-color 200ms ease, border-color 200ms ease;
+}
+.mo-chip:hover { background: rgba(195, 163, 124, 0.15); }
+.mo-chip[aria-pressed='true'] { background: rgba(191, 107, 70, 0.3); border-color: var(--terracotta-bright); }
+.mo-chip:focus-visible, .mo-cobrar:focus-visible { outline: 2px solid var(--crema); outline-offset: 2px; }
+
+.mo-error {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  padding: 12px 14px; border-radius: 10px; font-size: 13px;
+  color: #FFD4D4; background: rgba(120, 20, 20, 0.5); border: 1px solid #E53E3E;
+}
+.mo-error p { margin: 0; }
+
+.mo-vacio {
+  text-align: center; padding: 36px 20px; font-size: 16px; color: var(--beige);
+  border: 1.5px dashed rgba(195, 163, 124, 0.35); border-radius: 14px; background: rgba(10, 16, 28, 0.45);
+}
+
+.mo-tabla-contenedor { overflow-x: auto; border: 1px solid rgba(195, 163, 124, 0.2); border-radius: 12px; }
+.mo-tabla { width: 100%; border-collapse: collapse; font-size: 14px; }
+.mo-tabla th, .mo-tabla td { padding: 12px 14px; text-align: left; white-space: nowrap; }
+.mo-tabla th { font-size: 12px; font-weight: 600; color: var(--beige); background: rgba(10, 16, 28, 0.6); }
+.mo-tabla tbody tr { border-top: 1px solid rgba(195, 163, 124, 0.12); }
+.mo-tabla tbody tr:hover { background: rgba(195, 163, 124, 0.06); }
+.mo-tabla .mo-num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.mo-cobrar {
+  padding: 8px 16px; border: none; border-radius: 10px; cursor: pointer;
+  background: linear-gradient(135deg, #BF6B46 0%, #A45533 100%); color: #fff;
+  font-family: inherit; font-weight: 700; font-size: 13px;
+  transition: transform 200ms ease, background 200ms ease;
+}
+.mo-cobrar:hover { background: linear-gradient(135deg, #CE7750 0%, #BF6B46 100%); transform: translateY(-1px); }
+
+@media (prefers-reduced-motion: reduce) { .mo-chip, .mo-cobrar { transition: none; } }

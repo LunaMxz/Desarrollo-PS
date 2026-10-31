@@ -14,6 +14,7 @@ import MiEstadoCuentaPage from './pages/MiEstadoCuentaPage';
 import PublicarComunicadoPage from './pages/PublicarComunicadoPage';
 import ComunicadosPage from './pages/ComunicadosPage';
 import PublicarGastoPage from './pages/PublicarGastoPage';
+import MorosidadPage from './pages/MorosidadPage';
 
 // Referenciada por ProtectedRoute cuando el rol del usuario no tiene permiso
 const Unauthorized = () => <h1>No tienes permiso para ver esta página</h1>;
@@ -52,6 +53,7 @@ export default function App() {
             <Route path="/admin/comunicados" element={<ComunicadosPage />} />
             <Route path="/admin/comunicados/nuevo" element={<PublicarComunicadoPage />} />
             <Route path="/admin/transparencia/nueva" element={<PublicarGastoPage />} />
+            <Route path="/admin/morosidad" element={<MorosidadPage />} />
           </Route>
 
           {/* Redirección por defecto */}

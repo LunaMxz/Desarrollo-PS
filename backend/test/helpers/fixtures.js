@@ -55,6 +55,7 @@ export function crearIncidenciaFake(sobrescribir = {}) {
     estado: 'abierto',
     responsable: null,
     fecha_creacion: '2026-09-20T10:00:00.000Z',
+    fecha_actualizacion: '2026-09-20T10:00:00.000Z',
     fecha_resolucion: null,
     ...sobrescribir,
   };

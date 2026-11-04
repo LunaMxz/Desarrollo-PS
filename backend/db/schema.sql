@@ -62,6 +62,7 @@ CREATE TABLE incidencias (
     estado            estado_incidencia NOT NULL DEFAULT 'abierto',
     responsable       VARCHAR(150),      -- solo informativo, NO es cuenta de usuario
     fecha_creacion    TIMESTAMP NOT NULL DEFAULT NOW(),
+    fecha_actualizacion TIMESTAMP NOT NULL DEFAULT NOW(), -- último cambio (asignar o resolver), CU-15
     fecha_resolucion  TIMESTAMP
 );
 

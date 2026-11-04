@@ -86,7 +86,12 @@ export default function RegistrarPagoPage() {
   }
 
   // CU-14: si llegó con unidadId, selecciona esa unidad cuando ya se cargaron las unidades
-  useEffect(() => {  if (preseleccion.current == null || unidades.length === 0) return;  const encontrada = unidades.find((u) => u.id === Number(preseleccion.current));  preseleccion.current = null;  if (encontrada) seleccionarUnidad(encontrada);}, [unidades]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (preseleccion.current == null || unidades.length === 0) return;
+    const encontrada = unidades.find((u) => u.id === Number(preseleccion.current));
+    preseleccion.current = null; // solo se preselecciona una vez
+    if (encontrada) seleccionarUnidad(encontrada);
+  }, [unidades]);
 
   async function registrar(event) {
     event.preventDefault();

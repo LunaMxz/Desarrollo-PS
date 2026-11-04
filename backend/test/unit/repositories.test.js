@@ -140,6 +140,14 @@ describe('incidencias.repository', () => {
     expect(incidencia).toEqual({ id: 1, responsable: 'Plomero' });
   });
 
+  it('actualizarResponsableYEstado marca la fecha de actualización (CU-15)', async () => {
+    await incidenciasRepo.actualizarResponsableYEstado(1, { responsable: 'Plomero' });
+
+    const [sql] = ultimaConsulta();
+    expect(sql).toMatch(/fecha_actualizacion = NOW\(\)/);
+    expect(sql).toMatch(/RETURNING [\s\S]*fecha_actualizacion/);
+  });
+
   it('actualizarResponsableYEstado regresa null si no existe (y acepta sin opciones)', async () => {
     expect(await incidenciasRepo.actualizarResponsableYEstado(99)).toBeNull();
     expect(ultimaConsulta()[1]).toEqual([99, null, null]);
@@ -157,7 +165,7 @@ describe('incidencias.repository', () => {
     responder([{ id: 1, estado: 'resuelto' }]);
 
     expect(await incidenciasRepo.resolverIncidenciaInDB(1)).toEqual({ id: 1, estado: 'resuelto' });
-    expect(ultimaConsulta()[0]).toMatch(/estado = 'resuelto', fecha_resolucion = NOW\(\)/);
+    expect(ultimaConsulta()[0]).toMatch(/estado = 'resuelto', fecha_resolucion = NOW\(\), fecha_actualizacion = NOW\(\)/);
 
     responder([]);
     expect(await incidenciasRepo.resolverIncidenciaInDB(99)).toBeNull();

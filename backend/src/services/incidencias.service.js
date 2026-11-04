@@ -1,4 +1,4 @@
-import { findById, actualizarResponsableYEstado, listar, resolverIncidenciaInDB, insertarIncidencia } from '../repositories/incidencias.repository.js';
+import { findById, actualizarResponsableYEstado, listar, resolverIncidenciaInDB, insertarIncidencia, listarPorResidente } from '../repositories/incidencias.repository.js';
 const ESTADOS_VALIDOS = ['abierto', 'en_proceso', 'resuelto'];
 const MAX_LONGITUD = 150; // titulo y ubicacion son VARCHAR(150) en la BD
 
@@ -119,4 +119,10 @@ export async function resolverIncidencia(id) {
     // Notificación temporal al residente
     console.log(`[Notificación] Incidencia ${id} resuelta. Notificando al residente ID: ${incidencia.residente_id}`);
     return { message: 'Incidencia resuelta exitosamente', incidencia: actualizada };
+}
+
+// CU-15: el residente consulta solo sus incidencias. El id llega de la sesión
+// (req.user.id), nunca del cliente. Sin incidencias regresa [] (no es error).
+export async function listarMisIncidencias(residenteId) {
+  return listarPorResidente(residenteId);
 }

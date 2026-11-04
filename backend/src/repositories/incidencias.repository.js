@@ -4,6 +4,7 @@ export async function actualizarResponsableYEstado(id, { responsable, estado } =
         `UPDATE incidencias
         SET responsable = COALESCE($2, responsable),
         estado      = COALESCE($3, estado),
+        fecha_actualizacion = NOW(),
         fecha_resolucion = CASE
         WHEN $3 = 'resuelto' AND fecha_resolucion IS NULL THEN NOW()
         WHEN $3 IS NOT NULL AND $3 <> 'resuelto' THEN NULL
@@ -11,7 +12,7 @@ export async function actualizarResponsableYEstado(id, { responsable, estado } =
         END
         WHERE id = $1
         RETURNING id, residente_id, titulo, descripcion, ubicacion,
-        estado, responsable, fecha_creacion, fecha_resolucion`,
+        estado, responsable, fecha_creacion, fecha_actualizacion, fecha_resolucion`,
         [id, responsable ?? null, estado ?? null]
     );
     return result.rows[0] || null;
@@ -19,7 +20,7 @@ export async function actualizarResponsableYEstado(id, { responsable, estado } =
 export async function findById(id) {
     const result = await pool.query(
         `SELECT id, residente_id, titulo, descripcion, ubicacion,
-        estado, responsable, fecha_creacion, fecha_resolucion
+        estado, responsable, fecha_creacion, fecha_actualizacion, fecha_resolucion
         FROM incidencias
         WHERE id = $1`,
         [id]
@@ -31,10 +32,10 @@ export async function findById(id) {
 export async function resolverIncidenciaInDB(id) {
     const result = await pool.query(
         `UPDATE incidencias
-        SET estado = 'resuelto', fecha_resolucion = NOW()
+        SET estado = 'resuelto', fecha_resolucion = NOW(), fecha_actualizacion = NOW()
         WHERE id = $1
         RETURNING id, residente_id, titulo, descripcion, ubicacion,
-        estado, responsable, fecha_creacion, fecha_resolucion`,
+        estado, responsable, fecha_creacion, fecha_actualizacion, fecha_resolucion`,
         [id]
     );
     return result.rows[0] || null;
@@ -46,7 +47,7 @@ export async function insertarIncidencia({ residente_id, titulo, descripcion, ub
         `INSERT INTO incidencias (residente_id, titulo, descripcion, ubicacion, estado)
         VALUES ($1, $2, $3, $4, 'abierto')
         RETURNING id, residente_id, titulo, descripcion, ubicacion,
-        estado, responsable, fecha_creacion, fecha_resolucion`,
+        estado, responsable, fecha_creacion, fecha_actualizacion, fecha_resolucion`,
         [residente_id, titulo, descripcion, ubicacion ?? null]
     );
     return result.rows[0];
@@ -57,7 +58,7 @@ export async function listar({ estado } = {}) {
   const params = [];
   let query = `
     SELECT id, residente_id, titulo, descripcion, ubicacion,
-           estado, responsable, fecha_creacion, fecha_resolucion
+           estado, responsable, fecha_creacion, fecha_actualizacion, fecha_resolucion
     FROM incidencias`;
   if (estado) {
     params.push(estado);
@@ -68,5 +69,18 @@ export async function listar({ estado } = {}) {
     ? ` ORDER BY fecha_resolucion DESC NULLS LAST, fecha_creacion DESC`
     : ` ORDER BY fecha_creacion DESC`;
   const result = await pool.query(query, params);
+  return result.rows;
+}
+
+// CU-15: incidencias de un residente, de la más reciente a la más antigua
+export async function listarPorResidente(residenteId) {
+  const result = await pool.query(
+    `SELECT id, titulo, descripcion, ubicacion, estado, responsable,
+            fecha_creacion, fecha_actualizacion, fecha_resolucion
+     FROM incidencias
+     WHERE residente_id = $1
+     ORDER BY fecha_creacion DESC, id DESC`,
+    [residenteId]
+  );
   return result.rows;
 }

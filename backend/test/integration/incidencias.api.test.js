@@ -1,4 +1,4 @@
-// CU-03 (reportar), CU-08 (listar / asignar responsable) y CU-09 (resolver)
+// CU-03 (reportar), CU-08 (listar / asignar responsable), CU-09 (resolver) y CU-15 (mis incidencias)
 // - pruebas de la API. Solo se mockean los repositorios: no se necesita BD.
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
@@ -15,6 +15,7 @@ import {
   insertarIncidencia,
   actualizarResponsableYEstado,
   resolverIncidenciaInDB,
+  listarPorResidente,
 } from '../../src/repositories/incidencias.repository.js';
 import { admin, residente, findUsuarioPorId, bearer, crearIncidenciaFake } from '../helpers/fixtures.js';
 
@@ -222,5 +223,62 @@ describe('CU-09 PATCH /incidencias/:id/resolver', () => {
 
     expect(res.status).toBe(403);
     expect(resolverIncidenciaInDB).not.toHaveBeenCalled();
+  });
+});
+
+describe('CU-15 GET /incidencias/mias', () => {
+  it('200: el residente ve sus incidencias con fecha_actualizacion', async () => {
+    const mias = [crearIncidenciaFake({ id: 2, estado: 'en_proceso', responsable: 'Plomero' }), crearIncidenciaFake()];
+    vi.mocked(listarPorResidente).mockResolvedValue(mias);
+
+    const res = await request(app).get('/incidencias/mias').set('Authorization', bearer(residente));
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ incidencias: mias });
+    expect(res.body.incidencias[0]).toHaveProperty('fecha_actualizacion');
+    expect(listarPorResidente).toHaveBeenCalledWith(residente.id);
+  });
+
+  it('el id siempre sale de la sesión: se ignora uno enviado en la URL', async () => {
+    vi.mocked(listarPorResidente).mockResolvedValue([]);
+
+    await request(app)
+      .get('/incidencias/mias?residente_id=999&id=999')
+      .set('Authorization', bearer(residente))
+      .expect(200);
+
+    expect(listarPorResidente).toHaveBeenCalledTimes(1);
+    expect(listarPorResidente).toHaveBeenCalledWith(residente.id);
+  });
+
+  it('200: sin incidencias responde una lista vacía, no un error', async () => {
+    vi.mocked(listarPorResidente).mockResolvedValue([]);
+
+    const res = await request(app).get('/incidencias/mias').set('Authorization', bearer(residente));
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ incidencias: [] });
+  });
+
+  it('403: el admin no puede usar la vista del residente', async () => {
+    const res = await request(app).get('/incidencias/mias').set('Authorization', bearer(admin));
+
+    expect(res.status).toBe(403);
+    expect(listarPorResidente).not.toHaveBeenCalled();
+  });
+
+  it('401: sin token', async () => {
+    const res = await request(app).get('/incidencias/mias');
+
+    expect(res.status).toBe(401);
+    expect(listarPorResidente).not.toHaveBeenCalled();
+  });
+
+  it('500: si falla la BD responde con error', async () => {
+    vi.mocked(listarPorResidente).mockRejectedValue(new Error('conexión perdida'));
+
+    const res = await request(app).get('/incidencias/mias').set('Authorization', bearer(residente));
+
+    expect(res.status).toBe(500);
   });
 });

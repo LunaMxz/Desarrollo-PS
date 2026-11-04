@@ -71,3 +71,16 @@ export async function listar({ estado } = {}) {
   const result = await pool.query(query, params);
   return result.rows;
 }
+
+// CU-15: incidencias de un residente, de la más reciente a la más antigua
+export async function listarPorResidente(residenteId) {
+  const result = await pool.query(
+    `SELECT id, titulo, descripcion, ubicacion, estado, responsable,
+            fecha_creacion, fecha_actualizacion, fecha_resolucion
+     FROM incidencias
+     WHERE residente_id = $1
+     ORDER BY fecha_creacion DESC, id DESC`,
+    [residenteId]
+  );
+  return result.rows;
+}

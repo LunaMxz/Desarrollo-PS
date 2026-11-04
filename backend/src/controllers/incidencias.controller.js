@@ -1,4 +1,4 @@
-import { listarIncidencias, asignarResponsable, resolverIncidencia, crearIncidencia } from '../services/incidencias.service.js';
+import { listarIncidencias, asignarResponsable, resolverIncidencia, crearIncidencia, listarMisIncidencias } from '../services/incidencias.service.js';
 
 // CU-03: POST /incidencias
 export async function crearIncidenciaHandler(req, res, next) {
@@ -47,6 +47,16 @@ export async function resolverIncidenciaHandler(req, res, next) {
     try {
         const resultado = await resolverIncidencia(req.params.id);
         res.status(200).json(resultado);
+    } catch (err) {
+        next(err);
+    }
+}
+
+// CU-15: GET /incidencias/mias -> { incidencias }
+export async function misIncidenciasHandler(req, res, next) {
+    try {
+        const incidencias = await listarMisIncidencias(req.user.id);
+        res.json({ incidencias });
     } catch (err) {
         next(err);
     }

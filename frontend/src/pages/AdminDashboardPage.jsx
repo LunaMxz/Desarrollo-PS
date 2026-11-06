@@ -1,6 +1,8 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
+import DashboardResumen from '../components/DashboardResumen';
+import './AdminDashboardRedesign.css';
 import './AdminDashboardPage.css';
 
 // Accesos ya implementados, agrupados por sección
@@ -183,7 +185,7 @@ export default function AdminDashboardPage() {
 
   return (
     <div 
-      className="admin-dashboard-screen"
+      className="admin-dashboard-screen dash-admin"
       style={{
         '--sky-top': coloresCielo.top,
         '--sky-bot': coloresCielo.bot
@@ -241,8 +243,20 @@ export default function AdminDashboardPage() {
 
       {/* Contenido flotante */}
       <main className="admin-dashboard-contenido">
-        {SECCIONES_DISPONIBLES.map((seccion) => (
-          <section key={seccion.titulo}>
+        <div className="dash-welcome">
+          <div><p className="dash-eyebrow">TU CONDOMINIO, EN UN VISTAZO</p>
+            <h2>{horaActual < 12 ? 'Buenos días' : horaActual < 19 ? 'Buenas tardes' : 'Buenas noches'}</h2>
+            <p className="dash-muted">Consulta el estado de tu comunidad y atiende lo importante.</p>
+          </div>
+          <time className="dash-date" dateTime={new Date().toLocaleDateString('en-CA')}>
+            {new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })}
+          </time>
+        </div>
+        <DashboardResumen />
+        <div className="dash-tools-heading"><h2>Herramientas de administración</h2><p className="dash-muted">Todos tus módulos, en un solo lugar</p></div>
+        <div className="dash-modules">
+        {SECCIONES_DISPONIBLES.map((seccion, indice) => (
+          <section className={`dash-module dash-module--${indice}`} key={seccion.titulo}>
             <h2 className="admin-dashboard-seccion__titulo">{seccion.titulo}</h2>
             <div className="admin-dashboard-grid">
               {seccion.accesos.map((acceso) => (
@@ -255,6 +269,7 @@ export default function AdminDashboardPage() {
           </section>
         ))}
 
+        </div>
         {ACCESOS_PROXIMAMENTE.length > 0 && (
           <section>
             <h2 className="admin-dashboard-seccion__titulo">Próximamente</h2>

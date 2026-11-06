@@ -1,0 +1,61 @@
+/* Rediseño aislado al dashboard; las demás vistas conservan su apariencia. */
+.dash-admin .admin-dashboard-contenido { width: 100%; max-width: 1200px; box-sizing: border-box; gap: 24px; padding-top: 30px; }
+.dash-admin .dash-welcome { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+.dash-admin .dash-eyebrow { color: var(--terracotta-bright); letter-spacing: .16em; font-size: 10px; font-weight: 700; margin: 0 0 10px; }
+.dash-admin .dash-welcome h2 { font: 500 clamp(28px, 4vw, 38px) 'Fraunces', Georgia, serif; margin: 0 0 8px; }
+.dash-admin .dash-muted { color: var(--beige); font-size: 13px; line-height: 1.6; margin: 0; }
+.dash-admin .dash-date { color: var(--beige); border: 1px solid rgba(195,163,124,.25); border-radius: 30px; padding: 10px 16px; font-size: 12px; white-space: nowrap; background: rgba(12,20,35,.65); }
+.dash-admin .dash-indicators { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.dash-admin .dash-tone-green { --tone: #91c9a6; }
+.dash-admin .dash-tone-gold { --tone: #e3b45c; }
+.dash-admin .dash-tone-blue { --tone: #93b9df; }
+.dash-admin .dash-tone-rose { --tone: #e49b8d; }
+.dash-admin .dash-ind { padding: 22px; background: linear-gradient(140deg, rgba(26,37,58,.94), rgba(12,20,35,.95)); border: 1px solid rgba(195,163,124,.2); border-top: 3px solid var(--tone); border-radius: 14px; min-width: 0; }
+.dash-admin .dash-ind p { font-size: 12px; color: var(--beige); margin: 0 0 12px; }
+.dash-admin .dash-ind strong { display: block; font: 500 clamp(22px, 2.5vw, 30px) 'Fraunces', Georgia, serif; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.dash-admin .dash-ind small { display: block; color: var(--beige); font-size: 11px; margin-top: 12px; }
+.dash-admin .dash-main-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
+.dash-admin .dash-panel { background: linear-gradient(150deg, rgba(18,26,43,.93), rgba(11,18,32,.94)); border: 1px solid rgba(195,163,124,.22); border-radius: 18px; padding: 26px; min-width: 0; }
+.dash-admin .dash-panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
+.dash-admin .dash-panel h2, .dash-admin .dash-tools-heading h2 { font: 500 22px 'Fraunces', Georgia, serif; margin: 0; }
+.dash-admin .dash-tag { font-size: 10px; color: var(--beige); border: 1px solid rgba(195,163,124,.3); padding: 5px 9px; border-radius: 20px; }
+.dash-admin .dash-attention-item { display: flex; align-items: flex-start; gap: 18px; padding: 20px 0; border-top: 1px solid rgba(195,163,124,.15); }
+.dash-admin .dash-attention-number { min-width: 46px; min-height: 46px; display: grid; place-items: center; font: 500 24px 'Fraunces', Georgia, serif; color: var(--terracotta-bright); background: rgba(191,107,70,.13); border-radius: 12px; }
+.dash-admin .dash-attention-item h3 { font-size: 14px; margin: 0 0 6px; }
+.dash-admin .dash-attention-item p { font-size: 12px; color: var(--beige); margin: 0 0 8px; }
+.dash-admin .dash-attention-item a, .dash-admin .dash-text-link { color: var(--terracotta-bright); font-size: 12px; font-weight: 600; text-decoration: none; display: inline-block; padding: 6px 0; }
+.dash-admin .dash-attention-item a:hover, .dash-admin .dash-text-link:hover { text-decoration: underline; }
+.dash-admin .dash-comparison { margin-top: 24px; }
+.dash-admin .dash-comparison > div:first-child { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 13px; margin-bottom: 10px; }
+.dash-admin .dash-track { height: 14px; border-radius: 4px; background: rgba(195,163,124,.09); overflow: hidden; }
+.dash-admin .dash-track > div { height: 100%; background: var(--tone); border-radius: inherit; }
+.dash-admin .dash-accumulated { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; border-top: 1px solid rgba(195,163,124,.2); margin: 28px 0 12px; padding-top: 20px; font-size: 13px; }
+.dash-admin .dash-accumulated strong { font: 500 20px 'Fraunces', Georgia, serif; }
+.dash-admin .dash-error { color: #efb3a8; font-size: 13px; background: rgba(134,53,43,.12); padding: 14px; border: 1px solid rgba(239,179,168,.2); border-radius: 10px; display: flex; justify-content: space-between; gap: 12px; align-items: center; margin: 12px 0; flex-wrap: wrap; }
+.dash-admin .dash-error button { font: inherit; color: var(--crema); border: 1px solid rgba(195,163,124,.4); background: transparent; border-radius: 8px; padding: 10px 12px; cursor: pointer; }
+.dash-admin .dash-success { color: #91c9a6; font-size: 13px; }
+.dash-admin .dash-publicaciones-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; }
+.dash-admin .dash-list-title { color: var(--beige); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; margin: 0 0 12px; }
+.dash-admin .dash-publicaciones { margin: 0; padding: 0; list-style: none; }
+.dash-admin .dash-publicaciones li { display: flex; gap: 12px; align-items: center; border-top: 1px solid rgba(195,163,124,.13); padding: 14px 0; font-size: 12px; }
+.dash-admin .dash-publicaciones li > div { flex: 1; min-width: 0; }
+.dash-admin .dash-publicaciones strong { display: block; font-weight: 500; line-height: 1.5; overflow-wrap: anywhere; }
+.dash-admin .dash-publicaciones time { display: block; color: var(--beige); margin-top: 5px; font-size: 11px; }
+.dash-admin .dash-publicacion-marca { color: var(--terracotta-bright); font-size: 18px; }
+.dash-admin .dash-tools-heading { margin-top: 12px; }
+.dash-admin .dash-tools-heading p { margin-top: 7px; }
+.dash-admin .dash-modules { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.dash-admin .dash-module { border: 1px solid rgba(195,163,124,.18); padding: 22px; border-radius: 16px; background: rgba(12,20,35,.86); }
+.dash-admin .dash-module--2 { grid-column: 1 / -1; }
+.dash-admin .dash-module--2 .admin-dashboard-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.dash-admin .admin-dashboard-grid { grid-template-columns: 1fr; gap: 10px; }
+.dash-admin .admin-dashboard-seccion__titulo { font-size: 18px; border-left: 3px solid var(--terracotta); padding-left: 12px; }
+.dash-admin .admin-dashboard-tarjeta { padding: 16px; border-radius: 10px; box-shadow: none; background: rgba(26,37,58,.65); }
+.dash-admin .admin-dashboard-tarjeta h3 { font-size: 13px; display: flex; gap: 10px; align-items: center; }
+.dash-admin .admin-dashboard-tarjeta p { font-size: 12px; }
+.dash-admin .dash-access-mark { color: var(--terracotta-bright); font-size: 18px; }
+.dash-admin a:focus-visible, .dash-admin button:focus-visible { outline: 2px solid var(--terracotta-bright); outline-offset: 4px; }
+@media (max-width: 1000px) { .dash-admin .dash-indicators { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .dash-admin .dash-main-row, .dash-admin .dash-modules, .dash-admin .dash-publicaciones-grid { grid-template-columns: 1fr; } .dash-admin .dash-module--2 .admin-dashboard-grid { grid-template-columns: 1fr; } .dash-admin .dash-welcome { align-items: flex-start; flex-direction: column; } .dash-admin .dash-panel { padding: 20px; } }
+@media (max-width: 420px) { .dash-admin .admin-dashboard-contenido { padding: 24px 14px 40px; } .dash-admin .dash-indicators { gap: 10px; } .dash-admin .dash-ind { padding: 16px 12px; } }
+@media (prefers-reduced-motion: reduce) { .dash-admin .admin-dashboard-tarjeta { transition: none; } .dash-admin .admin-dashboard-tarjeta:hover { transform: none; } }

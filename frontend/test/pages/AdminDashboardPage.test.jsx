@@ -4,6 +4,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('../../src/context/AuthContext', () => ({ useAuth: vi.fn() }));
+vi.mock('../../src/components/DashboardResumen', () => ({ default: () => <div>Resumen administrativo</div> }));
 
 import AdminDashboardPage from '../../src/pages/AdminDashboardPage';
 import { useAuth } from '../../src/context/AuthContext';

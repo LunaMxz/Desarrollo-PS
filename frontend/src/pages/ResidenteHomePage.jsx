@@ -2,6 +2,8 @@ import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './ResidenteHomePage.css';
+import ResumenResidente from '../components/ResumenResidente';
+import './ResidentePanel.css';
 
 // Estructuras para el skyline
 const ALTURAS_FONDO = [40, 65, 50, 80, 60, 90, 55, 75, 45, 68, 52];
@@ -106,7 +108,7 @@ export default function ResidenteHomePage() {
 
   return (
     <div 
-      className="residente-home-screen"
+      className="residente-home-screen residente-panel"
       style={{
         '--sky-top': coloresCielo.top,
         '--sky-bot': coloresCielo.bot
@@ -161,7 +163,7 @@ export default function ResidenteHomePage() {
       <header className="residente-home-header">
         <div>
           <p className="residente-home-header__eyebrow">Portal de residentes</p>
-          <h1 className="residente-home-header__titulo">Hola{user?.correo ? `, ${user.correo}` : ''}</h1>
+          <h1 className="residente-home-header__titulo">Mi comunidad</h1>
         </div>
         <button type="button" className="residente-home-header__logout" onClick={handleLogout}>
           Cerrar sesión
@@ -170,6 +172,15 @@ export default function ResidenteHomePage() {
 
       {/* Contenido principal */}
       <main className="residente-home-contenido">
+        <div className="rp-welcome">
+          <div><p className="rp-eyebrow">TU HOGAR, TU COMUNIDAD</p>
+            <h2>{horaActual < 12 ? 'Buenos días' : horaActual < 19 ? 'Buenas tardes' : 'Buenas noches'}</h2>
+            <p className="rp-muted">Consulta tus cuotas, sigue tus reportes y mantente al tanto.</p>
+          </div>
+          {user?.correo && <span className="rp-email">{user.correo}</span>}
+        </div>
+        <ResumenResidente />
+        <div className="rp-tools"><h2>¿Qué necesitas hacer?</h2><p className="rp-muted">Accesos a los servicios de tu comunidad</p></div>
         <div className="residente-home-grid">
           <button
             type="button"

@@ -6,10 +6,12 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 
 vi.mock('../../src/api/client', () => ({ obtenerMorosidad: vi.fn() }));
 vi.mock('../../src/context/AuthContext', () => ({ useAuth: vi.fn() }));
+vi.mock('../../src/api/recordatorios.api', () => ({ enviarRecordatorioPago: vi.fn() }));
 
 import MorosidadPage from '../../src/pages/MorosidadPage';
 import { obtenerMorosidad } from '../../src/api/client';
 import { useAuth } from '../../src/context/AuthContext';
+import { enviarRecordatorioPago } from '../../src/api/recordatorios.api';
 
 const unidades = [
   { unidad_id: 5, unidad_identificador: 'A-101', residente_correo: 'ana@condominio.com', meses_adeudados: 2, adeudo: 3000 },
@@ -108,5 +110,55 @@ describe('CU-14 MorosidadPage', () => {
     await user.click(within(fila).getByRole('button', { name: 'Cobrar' }));
 
     expect(await screen.findByText('Registrar pago · unidadId: 5')).toBeInTheDocument();
+  });
+
+  // Recordatorio de pago
+  const fila = (unidad) => within(screen.getByRole('cell', { name: unidad }).closest('tr'));
+
+  it('Recordar está junto a Cobrar y envía el recordatorio de esa unidad', async () => {
+    let terminar;
+    vi.mocked(enviarRecordatorioPago).mockReturnValue(new Promise((r) => { terminar = r; }));
+    const user = userEvent.setup({ delay: null });
+    renderPagina();
+    await screen.findByRole('table');
+
+    const a101 = fila('A-101');
+    expect(a101.getByRole('button', { name: 'Cobrar' })).toBeInTheDocument();
+    await user.click(a101.getByRole('button', { name: 'Enviar recordatorio de pago a A-101' }));
+
+    expect(enviarRecordatorioPago).toHaveBeenCalledWith(5);
+    expect(a101.getByRole('button', { name: /A-101/ })).toBeDisabled();
+    expect(a101.getByRole('button', { name: /A-101/ })).toHaveTextContent('Enviando…');
+
+    terminar({ success: true, recordatorio: { id: 1 } });
+
+    expect(await screen.findByRole('status')).toHaveTextContent(
+      'Recordatorio enviado a ana@condominio.com (A-101). Lo verá la próxima vez que entre.'
+    );
+    expect(a101.getByRole('button', { name: /A-101/ })).toHaveTextContent('Recordado ✓');
+    expect(a101.getByRole('button', { name: /A-101/ })).toBeDisabled();
+  });
+
+  it('si el backend lo rechaza muestra el motivo y se puede volver a intentar', async () => {
+    vi.mocked(enviarRecordatorioPago).mockResolvedValue({
+      success: false, error: 'El residente ya tiene un recordatorio que aún no ha visto',
+    });
+    const user = userEvent.setup({ delay: null });
+    renderPagina();
+    await screen.findByRole('table');
+
+    await user.click(screen.getByRole('button', { name: 'Enviar recordatorio de pago a A-101' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'A-101: El residente ya tiene un recordatorio que aún no ha visto'
+    );
+    expect(screen.getByRole('button', { name: 'Enviar recordatorio de pago a A-101' })).toBeEnabled();
+  });
+
+  it('Recordar está deshabilitado si la unidad no tiene residente activo', async () => {
+    renderPagina();
+    await screen.findByRole('table');
+
+    expect(screen.getByRole('button', { name: 'Enviar recordatorio de pago a B-202' })).toBeDisabled();
   });
 });

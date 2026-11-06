@@ -8,6 +8,7 @@ import cargosRoutes from './cargos.routes.js'; // <- CU-06
 import unidadesRoutes from './unidades.routes.js'; // <- CU-07
 import comunicadosRoutes from './comunicados.routes.js'; // <- CU-10 / CU-11
 import transparenciaRoutes from './transparencia.routes.js'; // <- CU-12
+import recordatoriosRoutes from './recordatorios.routes.js'; // <- CU-14 (recordatorio de pago)
 const router = Router();
 router.use('/health', healthRoutes);
 router.use('/auth', authRoutes);
@@ -18,4 +19,5 @@ router.use('/cargos', cargosRoutes);
 router.use('/unidades', unidadesRoutes);
 router.use('/comunicados', comunicadosRoutes);
 router.use('/transparencia', transparenciaRoutes);
+router.use('/recordatorios', recordatoriosRoutes);
 export default router;

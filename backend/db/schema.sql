@@ -126,3 +126,19 @@ CREATE INDEX idx_conceptos_publicacion ON conceptos_gasto(publicacion_id);
 CREATE INDEX idx_archivos_publicacion  ON archivos_transparencia(publicacion_id);
 CREATE INDEX idx_archivos_concepto     ON archivos_transparencia(concepto_id);
 CREATE INDEX idx_publicaciones_fecha   ON publicaciones_transparencia(fecha_publicacion DESC);
+
+-- CU-14: recordatorios de pago que el admin envía desde el reporte de morosidad.
+-- El residente los ve en una ventana al entrar; al cerrarla se llena fecha_visto.
+CREATE TABLE recordatorios_pago (
+    id            SERIAL PRIMARY KEY,
+    unidad_id     INTEGER NOT NULL REFERENCES unidades(id),
+    residente_id  INTEGER NOT NULL REFERENCES usuarios(id),  -- residente activo al enviarlo
+    admin_id      INTEGER NOT NULL REFERENCES usuarios(id),  -- quien lo envió
+    fecha_envio   TIMESTAMP NOT NULL DEFAULT NOW(),
+    fecha_visto   TIMESTAMP                                   -- NULL = aún no lo ve
+);
+
+-- Un residente solo puede tener UN recordatorio sin ver a la vez
+CREATE UNIQUE INDEX recordatorio_pendiente_unico
+    ON recordatorios_pago (residente_id)
+    WHERE fecha_visto IS NULL;

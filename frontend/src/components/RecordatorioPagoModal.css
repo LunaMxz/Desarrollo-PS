@@ -1,0 +1,77 @@
+/* CU-14: ventana de recordatorio de pago del residente */
+.recordatorio-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(5, 9, 18, 0.72);
+  backdrop-filter: blur(3px);
+}
+
+.recordatorio-modal {
+  width: 100%;
+  max-width: 440px;
+  padding: 28px;
+  border: 1px solid rgba(224, 141, 91, 0.5);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(20, 30, 48, 0.98), rgba(11, 18, 32, 0.98));
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  color: var(--crema, #f4ead8);
+  animation: recordatorio-entrada 220ms ease-out;
+}
+
+.recordatorio-modal__eyebrow {
+  margin: 0 0 6px;
+  color: #E08D5B;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.recordatorio-modal__titulo {
+  margin: 0 0 12px;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 24px;
+}
+
+.recordatorio-modal__texto { margin: 0 0 24px; font-size: 15px; line-height: 1.55; }
+.recordatorio-modal__texto strong { color: #ffd6a8; }
+
+.recordatorio-modal__acciones { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+
+.recordatorio-modal__acciones button {
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.recordatorio-modal__secundario {
+  border: 1.5px solid rgba(195, 163, 124, 0.45);
+  background: transparent;
+  color: inherit;
+}
+.recordatorio-modal__secundario:hover { background: rgba(195, 163, 124, 0.15); }
+
+.recordatorio-modal__principal {
+  border: none;
+  background: linear-gradient(135deg, #BF6B46 0%, #A45533 100%);
+  color: #fff;
+}
+.recordatorio-modal__principal:hover { background: linear-gradient(135deg, #CE7750 0%, #BF6B46 100%); }
+
+.recordatorio-modal__acciones button:focus-visible { outline: 2px solid #f4ead8; outline-offset: 2px; }
+
+@keyframes recordatorio-entrada {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) { .recordatorio-modal { animation: none; } }

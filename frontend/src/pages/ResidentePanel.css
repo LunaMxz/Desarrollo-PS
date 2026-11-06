@@ -1,0 +1,41 @@
+.residente-panel .residente-home-contenido { width: 100%; max-width: 1180px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px; padding: 32px 24px 64px; }
+.residente-panel .rp-welcome { display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+.residente-panel .rp-eyebrow { margin: 0 0 10px; color: var(--terracotta-bright); font-size: 10px; font-weight: 700; letter-spacing: .16em; }
+.residente-panel .rp-welcome h2 { font: 500 clamp(28px, 4vw, 38px) 'Fraunces', Georgia, serif; margin: 0 0 10px; }
+.residente-panel .rp-muted { color: var(--beige); font-size: 13px; line-height: 1.6; margin: 0; }
+.residente-panel .rp-email { font-size: 12px; color: var(--beige); padding: 12px 16px; border: 1px solid rgba(195,163,124,.25); border-radius: 24px; background: rgba(12,20,35,.7); overflow-wrap: anywhere; }
+.residente-panel .rp-overview { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 6fr); gap: 24px; }
+.residente-panel .rp-panel { border: 1px solid rgba(195,163,124,.25); border-radius: 18px; padding: 26px; background: linear-gradient(145deg, rgba(20,30,48,.96), rgba(11,18,32,.95)); min-width: 0; }
+.residente-panel .rp-account { border-top: 3px solid var(--terracotta-bright); }
+.residente-panel .rp-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+.residente-panel .rp-heading h2, .residente-panel .rp-tools h2 { font: 500 23px 'Fraunces', Georgia, serif; margin: 0 0 6px; }
+.residente-panel .rp-tag { font-size: 11px; color: var(--beige); padding: 5px 10px; border: 1px solid rgba(195,163,124,.25); border-radius: 20px; }
+.residente-panel .rp-amount { display: block; font: 500 clamp(32px, 4vw, 46px) 'Fraunces', Georgia, serif; font-variant-numeric: tabular-nums; margin: 12px 0 18px; overflow-wrap: anywhere; }
+.residente-panel .rp-account-status { display: inline-block; padding: 7px 12px; margin-bottom: 14px; border-radius: 8px; background: rgba(191,107,70,.15); color: #efb27e; font-size: 12px; }
+.residente-panel .rp-good { color: #9ed7b4; background: rgba(95,170,124,.12); }
+.residente-panel .rp-link { display: inline-block; color: var(--terracotta-bright); text-decoration: none; font-size: 12px; font-weight: 600; padding: 12px 0; }
+.residente-panel .rp-link:hover { text-decoration: underline; }
+.residente-panel .rp-account > .rp-link { margin-top: 20px; }
+.residente-panel .rp-counts { display: flex; gap: 28px; margin-bottom: 18px; }
+.residente-panel .rp-counts > div { display: flex; align-items: baseline; gap: 10px; }
+.residente-panel .rp-counts strong { font: 500 30px 'Fraunces', Georgia, serif; }
+.residente-panel .rp-counts span { color: var(--beige); font-size: 12px; }
+.residente-panel .rp-reports { list-style: none; margin: 0; padding: 0; }
+.residente-panel .rp-reports li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 13px 0; border-top: 1px solid rgba(195,163,124,.15); }
+.residente-panel .rp-reports strong { font-size: 13px; font-weight: 500; overflow-wrap: anywhere; }
+.residente-panel .rp-reports small { display: block; color: var(--beige); font-size: 11px; margin-top: 6px; }
+.residente-panel .rp-state { flex-shrink: 0; color: #efb27e; background: rgba(191,107,70,.12); border-radius: 20px; padding: 6px 10px; font-size: 10px; }
+.residente-panel .rp-state--resuelto { color: #9ed7b4; background: rgba(95,170,124,.12); }
+.residente-panel .rp-state--en_proceso { color: #a8c9ef; background: rgba(100,140,190,.15); }
+.residente-panel .rp-notices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.residente-panel .rp-notices article { border-top: 2px solid rgba(195,163,124,.35); padding-top: 16px; min-width: 0; }
+.residente-panel .rp-notices time { color: var(--beige); font-size: 11px; }
+.residente-panel .rp-notices h3 { font-size: 15px; margin: 12px 0 8px; overflow-wrap: anywhere; }
+.residente-panel .rp-notices p { color: var(--beige); font-size: 13px; line-height: 1.65; margin: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; white-space: pre-line; }
+.residente-panel .rp-error { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding: 14px; color: #efb3a8; background: rgba(134,53,43,.12); border-radius: 10px; font-size: 13px; }
+.residente-panel .rp-error button { cursor: pointer; font: inherit; padding: 10px; color: var(--crema); border: 1px solid rgba(195,163,124,.4); border-radius: 8px; background: transparent; }
+.residente-panel .rp-tools { margin-top: 8px; }
+.residente-panel .residente-home-tarjeta--activa { box-shadow: none; padding: 22px; }
+.residente-panel a:focus-visible, .residente-panel button:focus-visible { outline: 2px solid var(--terracotta-bright); outline-offset: 4px; }
+@media (max-width: 760px) { .residente-panel .rp-overview, .residente-panel .rp-notices { grid-template-columns: 1fr; } .residente-panel .rp-welcome { flex-direction: column; align-items: flex-start; } .residente-panel .residente-home-grid { grid-template-columns: 1fr; } .residente-panel .rp-panel { padding: 20px; } }
+@media (max-width: 420px) { .residente-panel .residente-home-contenido { padding: 24px 14px 40px; } .residente-panel .rp-reports li { flex-wrap: wrap; } }

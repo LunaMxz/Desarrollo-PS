@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { listarComunicados } from '../api/comunicados.api';
 import AdminHeader from '../components/AdminHeader';
 import { useAuth } from '../context/AuthContext';
+import ResumenBalance from '../components/ResumenBalance';
 import ListaGastos from '../components/ListaGastos';
 import { obtenerCieloParaHora, obtenerProporcionLuces } from '../utils/coloresHorario';
 import './ComunicadosPage.css';
@@ -182,6 +183,7 @@ export default function ComunicadosPage() {
         <section role="tabpanel" id="panel-transparencia" aria-labelledby="tab-transparencia"
           hidden={pestana !== 'transparencia'} tabIndex={0}>
           {/* CU-12 Parte B: maneja su propia carga y paginación, sin compartir el estado de Avisos */}
+          {transparenciaAbierta && !esAdmin && <ResumenBalance mostrarPorCobrar={false} />}
           {transparenciaAbierta && <ListaGastos />}
         </section>
         </div>

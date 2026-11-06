@@ -69,6 +69,11 @@ const SECCIONES_DISPONIBLES = [
     titulo: 'Transparencia',
     accesos: [
       {
+        to: '/admin/transparencia/balance',
+        titulo: 'Balance financiero',
+        descripcion: 'Consultar ingresos, egresos y saldos por mes.',
+      },
+      {
         to: '/admin/transparencia/nueva',
         titulo: 'Publicar gasto',
         descripcion: 'Registrar un gasto con sus conceptos, fotos y comprobantes.',

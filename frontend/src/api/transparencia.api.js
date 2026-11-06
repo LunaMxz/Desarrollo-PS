@@ -1,4 +1,26 @@
 import apiClient, { mensajeDeError as mensajeDeErrorLectura } from './client';
+import { obtenerBalancePrueba } from '../mocks/balance';
+
+// CU-13: modo temporal explícito, igual que los comunicados.
+// Activar con VITE_BALANCE_MOCK=true en desarrollo.
+export async function obtenerBalance(anio, mes) {
+  if (import.meta.env.DEV && import.meta.env.VITE_BALANCE_MOCK === 'true') {
+    return { success: true, balance: obtenerBalancePrueba(anio, mes) };
+  }
+  try {
+    const { data } = await apiClient.get('/transparencia/balance', { params: { anio, mes } });
+    if (!data || !['ingresos', 'egresos', 'saldo_mes', 'saldo_acumulado'].every(
+      (campo) => typeof data[campo] === 'number' && Number.isFinite(data[campo])
+    ) || !Array.isArray(data.egresos_por_categoria)) {
+      return { success: false, error: 'El servidor devolvió un balance inválido.' };
+    }
+    return { success: true, balance: data };
+  } catch (err) {
+    return { success: false, error: mensajeDeErrorLectura(err, {
+      noAutorizado: 'No tienes permiso para consultar el balance.',
+    }) };
+  }
+}
 
 // Traduce un error de axios a un mensaje legible (prioriza el { error } del backend).
 function mensajeDeError(err) {

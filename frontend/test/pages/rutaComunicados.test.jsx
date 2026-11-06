@@ -5,7 +5,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('../../src/api/comunicados.api', () => ({ listarComunicados: vi.fn(), publicarComunicado: vi.fn() }));
-vi.mock('../../src/api/transparencia.api', () => ({ listarGastos: vi.fn(), publicarGasto: vi.fn() }));
+vi.mock('../../src/api/transparencia.api', () => ({ obtenerBalance: vi.fn().mockResolvedValue({ success: false, error: 'Balance no disponible' }), listarGastos: vi.fn(), publicarGasto: vi.fn() }));
 
 import App from '../../src/App';
 import { listarComunicados } from '../../src/api/comunicados.api';

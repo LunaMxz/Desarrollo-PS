@@ -1,0 +1,14 @@
+/* Misma paleta, tipografía y tarjetas del resumen de Morosidad. */
+.resumen-balance { margin-bottom: 28px; min-width: 0; }
+.resumen-balance__selector { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 20px 0; }
+.resumen-balance__selector label { color: var(--beige); font-size: 14px; font-weight: 600; }
+.resumen-balance__selector input { min-height: 44px; box-sizing: border-box; max-width: 100%; padding: 10px 14px; border: 1.5px solid rgba(195, 163, 124, 0.4); border-radius: 10px; background: rgba(10, 16, 28, 0.45); color: var(--crema); font: inherit; color-scheme: dark; }
+.resumen-balance__tarjetas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 0 0 20px; }
+.resumen-balance__tarjetas > div { padding: 16px 18px; border-radius: 14px; border: 1px solid var(--terracotta-bright); background: linear-gradient(135deg, rgba(191, 107, 70, 0.28), rgba(191, 107, 70, 0.1)); }
+.resumen-balance__tarjetas dt { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--beige); }
+.resumen-balance__tarjetas dd { margin: 4px 0 0; font-family: 'Fraunces', Georgia, serif; font-size: 30px; font-weight: 600; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.resumen-balance__categoria { margin-bottom: 16px; }
+.resumen-balance__etiqueta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; font-size: 14px; }
+.resumen-balance__pista { height: 10px; border-radius: 10px; overflow: hidden; background: rgba(195, 163, 124, 0.15); }
+.resumen-balance__barra { height: 100%; background: linear-gradient(135deg, var(--terracotta), var(--terracotta-bright)); border-radius: inherit; }
+@media (max-width: 600px) { .resumen-balance__tarjetas { grid-template-columns: 1fr; } }

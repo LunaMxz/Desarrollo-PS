@@ -8,7 +8,7 @@ import { listarGastos } from '../../src/api/transparencia.api';
 import { comunicadosPrueba } from '../../src/mocks/comunicados';
 
 vi.mock('../../src/api/comunicados.api', () => ({ listarComunicados: vi.fn() }));
-vi.mock('../../src/api/transparencia.api', () => ({ listarGastos: vi.fn() }));
+vi.mock('../../src/api/transparencia.api', () => ({ obtenerBalance: vi.fn().mockResolvedValue({ success: false, error: 'Balance no disponible' }), listarGastos: vi.fn() }));
 vi.mock('../../src/context/AuthContext', () => ({ useAuth: () => ({ logout: vi.fn() }) }));
 
 describe('ComunicadosPage', () => {

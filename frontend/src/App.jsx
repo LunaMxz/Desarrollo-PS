@@ -16,6 +16,7 @@ import ComunicadosPage from './pages/ComunicadosPage';
 import PublicarGastoPage from './pages/PublicarGastoPage';
 import BalancePage from './pages/BalancePage';
 import MorosidadPage from './pages/MorosidadPage';
+import MisIncidenciasPage from './pages/MisIncidenciasPage';
 
 // Referenciada por ProtectedRoute cuando el rol del usuario no tiene permiso
 const Unauthorized = () => <h1>No tienes permiso para ver esta página</h1>;
@@ -41,6 +42,7 @@ export default function App() {
           <Route element={<ProtectedRoute rolesPermitidos={['residente']} />}>
             <Route path="/residentes/estado-cuenta" element={<MiEstadoCuentaPage />} />
             <Route path="/residentes/comunicados" element={<ComunicadosPage />} />
+            <Route path="/residentes/incidencias" element={<MisIncidenciasPage />} />
           </Route>
 
           {/* Rutas exclusivas del administrador */}

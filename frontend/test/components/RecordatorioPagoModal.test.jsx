@@ -1,6 +1,6 @@
 // CU-14: ventana de recordatorio de pago que ve el residente al entrar.
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('../../src/api/recordatorios.api', () => ({
@@ -28,7 +28,8 @@ describe('CU-14 RecordatorioPagoModal', () => {
 
     const dialogo = await screen.findByRole('alertdialog', { name: 'Tienes pagos pendientes' });
     expect(dialogo).toHaveTextContent('Tienes 2 cuotas pendientes por un total de $3,000.50');
-    expect(screen.getByRole('button', { name: 'Ver mis cuotas' })).toHaveFocus();
+    // El foco se pone en un efecto después de pintar: en máquinas lentas llega un instante después
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Ver mis cuotas' })).toHaveFocus());
   });
 
   it('usa singular con una sola cuota', async () => {
@@ -62,7 +63,7 @@ describe('CU-14 RecordatorioPagoModal', () => {
 
     await user.keyboard('{Escape}');
 
-    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument());
     expect(marcarRecordatorioVisto).toHaveBeenCalledWith(7);
   });
 

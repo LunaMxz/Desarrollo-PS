@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { marcarRecordatorioVisto, obtenerRecordatorioPendiente } from '../api/recordatorios.api';
 import './RecordatorioPagoModal.css';
@@ -22,17 +22,29 @@ export default function RecordatorioPagoModal() {
     return () => { vigente = false; };
   }, []);
 
-  useEffect(() => {
-    if (recordatorio) botonPrincipal.current?.focus();
-  }, [recordatorio]);
+  // Ref para que cerrar() no cambie en cada render y marque el recordatorio una sola vez
+  const abierto = useRef(null);
+  abierto.current = recordatorio;
 
-  if (!recordatorio) return null;
-
-  function cerrar(destino) {
-    marcarRecordatorioVisto(recordatorio.id).catch(() => {});
+  const cerrar = useCallback((destino) => {
+    const actual = abierto.current;
+    if (!actual) return;
+    abierto.current = null;
+    marcarRecordatorioVisto(actual.id).catch(() => {});
     setRecordatorio(null);
     if (destino) navigate(destino);
-  }
+  }, [navigate]);
+
+  useEffect(() => {
+    if (!recordatorio) return undefined;
+    botonPrincipal.current?.focus();
+    // Escape cierra la ventana esté donde esté el foco
+    const alPresionar = (e) => { if (e.key === 'Escape') cerrar(); };
+    document.addEventListener('keydown', alPresionar);
+    return () => document.removeEventListener('keydown', alPresionar);
+  }, [recordatorio, cerrar]);
+
+  if (!recordatorio) return null;
 
   const cargos = recordatorio.cargos_pendientes;
 
@@ -44,7 +56,6 @@ export default function RecordatorioPagoModal() {
         aria-modal="true"
         aria-labelledby="recordatorio-titulo"
         aria-describedby="recordatorio-texto"
-        onKeyDown={(e) => { if (e.key === 'Escape') cerrar(); }}
       >
         <p className="recordatorio-modal__eyebrow">Recordatorio de la administración</p>
         <h2 id="recordatorio-titulo" className="recordatorio-modal__titulo">Tienes pagos pendientes</h2>

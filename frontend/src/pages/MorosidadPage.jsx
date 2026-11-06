@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { obtenerMorosidad } from '../api/client';
+import { enviarRecordatorioPago } from '../api/recordatorios.api';
 import AdminHeader from '../components/AdminHeader';
 import { obtenerCieloParaHora, obtenerProporcionLuces } from '../utils/coloresHorario';
 import './AdminDashboardPage.css';
@@ -24,6 +25,9 @@ export default function MorosidadPage() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
   const peticion = useRef(0); // descarta respuestas viejas al cambiar de filtro
+  // Recordatorios de pago: { [unidad_id]: 'enviando' | 'enviado' } y el último mensaje mostrado
+  const [recordatorios, setRecordatorios] = useState({});
+  const [avisoRecordatorio, setAvisoRecordatorio] = useState(null);
   const [hora, setHora] = useState(() => {
     const d = new Date();
     return d.getHours() + d.getMinutes() / 60;
@@ -60,6 +64,21 @@ export default function MorosidadPage() {
   );
   const totalCentavos = ordenadas.reduce((s, u) => s + Math.round(Number(u.adeudo) * 100), 0);
 
+  async function recordar(unidad) {
+    setRecordatorios((r) => ({ ...r, [unidad.unidad_id]: 'enviando' }));
+    setAvisoRecordatorio(null);
+    const resultado = await enviarRecordatorioPago(unidad.unidad_id);
+    setRecordatorios((r) => {
+      const siguiente = { ...r };
+      if (resultado.success) siguiente[unidad.unidad_id] = 'enviado';
+      else delete siguiente[unidad.unidad_id];
+      return siguiente;
+    });
+    setAvisoRecordatorio(resultado.success
+      ? { tipo: 'exito', texto: `Recordatorio enviado a ${unidad.residente_correo} (${unidad.unidad_identificador}). Lo verá la próxima vez que entre.` }
+      : { tipo: 'error', texto: `${unidad.unidad_identificador}: ${resultado.error}` });
+  }
+
   const cielo = obtenerCieloParaHora(hora);
   const luces = obtenerProporcionLuces(hora);
 
@@ -87,7 +106,8 @@ export default function MorosidadPage() {
         <div className="generar-cargos-card mo-card">
           <h1 className="generar-cargos-card__title">Reporte de morosidad</h1>
           <p className="generar-cargos-card__subtitle">
-            Unidades con cargos pendientes o parciales. Presiona Cobrar para registrar un pago.
+            Unidades con cargos pendientes o parciales. Presiona Cobrar para registrar un pago o
+            Recordar para que el residente vea un aviso de pago la próxima vez que entre.
           </p>
 
           <dl className="mo-resumen">
@@ -124,6 +144,15 @@ export default function MorosidadPage() {
             </div>
           )}
 
+          {avisoRecordatorio && (
+            <p
+              className={`mo-aviso mo-aviso--${avisoRecordatorio.tipo}`}
+              role={avisoRecordatorio.tipo === 'error' ? 'alert' : 'status'}
+            >
+              {avisoRecordatorio.texto}
+            </p>
+          )}
+
           {!cargando && !error && ordenadas.length === 0 && (
             <p className="mo-vacio" role="status">Ninguna unidad tiene adeudos 🎉</p>
           )}
@@ -137,7 +166,7 @@ export default function MorosidadPage() {
                     <th scope="col">Residente</th>
                     <th scope="col" className="mo-num">Meses</th>
                     <th scope="col" className="mo-num">Adeudo</th>
-                    <th scope="col">Acción</th>
+                    <th scope="col">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -148,13 +177,27 @@ export default function MorosidadPage() {
                       <td className="mo-num">{u.meses_adeudados}</td>
                       <td className="mo-num">{moneda.format(Number(u.adeudo))}</td>
                       <td>
-                        <button
-                          type="button"
-                          className="mo-cobrar"
-                          onClick={() => navigate('/admin/pagos/registrar', { state: { unidadId: u.unidad_id } })}
-                        >
-                          Cobrar
-                        </button>
+                        <div className="mo-acciones">
+                          <button
+                            type="button"
+                            className="mo-cobrar"
+                            onClick={() => navigate('/admin/pagos/registrar', { state: { unidadId: u.unidad_id } })}
+                          >
+                            Cobrar
+                          </button>
+                          <button
+                            type="button"
+                            className="mo-recordar"
+                            aria-label={`Enviar recordatorio de pago a ${u.unidad_identificador}`}
+                            title={u.residente_correo ? undefined : 'La unidad no tiene residente activo'}
+                            disabled={!u.residente_correo || Boolean(recordatorios[u.unidad_id])}
+                            onClick={() => recordar(u)}
+                          >
+                            {recordatorios[u.unidad_id] === 'enviando'
+                              ? 'Enviando…'
+                              : recordatorios[u.unidad_id] === 'enviado' ? 'Recordado ✓' : 'Recordar'}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

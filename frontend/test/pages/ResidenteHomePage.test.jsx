@@ -5,12 +5,15 @@ import { renderPagina } from '../helpers/render';
 import ResidenteHomePage from '../../src/pages/ResidenteHomePage';
 import apiClient, { obtenerMiEstadoCuenta } from '../../src/api/client';
 import { listarComunicados } from '../../src/api/comunicados.api';
+import { obtenerRecordatorioPendiente } from '../../src/api/recordatorios.api';
 
-vi.mock('../../src/context/AuthContext', () => ({ useAuth: () => ({ user: { correo: 'residente@ejemplo.com' }, logout: vi.fn() }) }));
+vi.mock('../../src/context/AuthContext', () => ({ useAuth: () => ({ user: { correo: 'residente@ejemplo.com', rol: 'residente' }, logout: vi.fn() }) }));
+vi.mock('../../src/api/recordatorios.api', () => ({ obtenerRecordatorioPendiente: vi.fn(), marcarRecordatorioVisto: vi.fn() }));
 vi.mock('../../src/api/client', () => ({ default: { get: vi.fn() }, obtenerMiEstadoCuenta: vi.fn() }));
 vi.mock('../../src/api/comunicados.api', () => ({ listarComunicados: vi.fn() }));
 
 beforeEach(() => {
+  obtenerRecordatorioPendiente.mockResolvedValue({ success: true, recordatorio: null });
   obtenerMiEstadoCuenta.mockResolvedValue({ success: true, estadoCuenta: {
     unidad: { identificador: 'Depto 301' }, saldoActual: 1500, cargos: [{ estado: 'parcial' }],
   } });
@@ -49,5 +52,13 @@ describe('Inicio del residente', () => {
     expect(await screen.findByText('Estás al corriente')).toBeInTheDocument();
     expect(await screen.findByText('Aún no has registrado incidencias.')).toBeInTheDocument();
     expect(await screen.findByText('No hay avisos publicados por el momento.')).toBeInTheDocument();
+  });
+
+  // CU-14
+  it('al entrar muestra el recordatorio de pago que mandó la administración', async () => {
+    obtenerRecordatorioPendiente.mockResolvedValue({ success: true, recordatorio: { id: 3, cargos_pendientes: 2, adeudo: 3000 } });
+    renderPagina(<ResidenteHomePage />);
+
+    expect(await screen.findByRole('alertdialog', { name: 'Tienes pagos pendientes' })).toBeInTheDocument();
   });
 });

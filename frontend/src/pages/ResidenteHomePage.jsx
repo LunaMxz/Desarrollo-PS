@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './ResidenteHomePage.css';
 import ResumenResidente from '../components/ResumenResidente';
+import RecordatorioPagoModal from '../components/RecordatorioPagoModal';
 import './ResidentePanel.css';
 
 // Estructuras para el skyline
@@ -180,6 +181,8 @@ export default function ResidenteHomePage() {
           {user?.correo && <span className="rp-email">{user.correo}</span>}
         </div>
         <ResumenResidente />
+        {/* CU-14: ventana con el recordatorio de pago que mandó la administración */}
+        {user?.rol === 'residente' && <RecordatorioPagoModal />}
         <div className="rp-tools"><h2>¿Qué necesitas hacer?</h2><p className="rp-muted">Accesos a los servicios de tu comunidad</p></div>
         <div className="residente-home-grid">
           <button

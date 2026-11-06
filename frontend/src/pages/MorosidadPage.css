@@ -21,7 +21,7 @@
 }
 .mo-chip:hover { background: rgba(195, 163, 124, 0.15); }
 .mo-chip[aria-pressed='true'] { background: rgba(191, 107, 70, 0.3); border-color: var(--terracotta-bright); }
-.mo-chip:focus-visible, .mo-cobrar:focus-visible { outline: 2px solid var(--crema); outline-offset: 2px; }
+.mo-chip:focus-visible, .mo-cobrar:focus-visible, .mo-recordar:focus-visible { outline: 2px solid var(--crema); outline-offset: 2px; }
 
 .mo-error {
   display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
@@ -52,6 +52,19 @@
 .mo-cobrar:hover { background: linear-gradient(135deg, #CE7750 0%, #BF6B46 100%); transform: translateY(-1px); }
 
 @media (prefers-reduced-motion: reduce) {
-  .mo-chip, .mo-cobrar, .mo-resumen div { transition: none; }
+  .mo-chip, .mo-cobrar, .mo-recordar, .mo-resumen div { transition: none; }
   .mo-resumen div:hover { transform: none; }
 }
+
+/* CU-14: recordatorio de pago junto a Cobrar */
+.mo-acciones { display: flex; gap: 8px; align-items: center; }
+.mo-recordar {
+  padding: 7px 14px; border: 1.5px solid rgba(224, 141, 91, 0.6); border-radius: 10px; cursor: pointer;
+  background: transparent; color: var(--crema); font-family: inherit; font-weight: 700; font-size: 13px;
+  transition: background 200ms ease;
+}
+.mo-recordar:hover:not(:disabled) { background: rgba(224, 141, 91, 0.2); }
+.mo-recordar:disabled { cursor: not-allowed; opacity: 0.55; }
+.mo-aviso { margin: 0 0 16px; padding: 12px 14px; border-radius: 10px; font-size: 14px; }
+.mo-aviso--exito { color: #bfe9c9; background: rgba(110, 200, 140, 0.12); border: 1px solid rgba(110, 200, 140, 0.45); }
+.mo-aviso--error { color: #efb3a8; background: rgba(134, 53, 43, 0.15); border: 1px solid rgba(239, 179, 168, 0.4); }

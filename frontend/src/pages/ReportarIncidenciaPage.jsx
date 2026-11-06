@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import apiClient from '../api/client';
 import AdminHeader from '../components/AdminHeader';
 import './ReportarIncidenciaPage.css';
@@ -230,7 +230,10 @@ export default function ReportarIncidenciaPage() {
 
           {exito && (
             <div className="reportar-incidencia-exito" role="status">
-              ✓ Incidencia reportada correctamente.
+              ✓ Incidencia reportada correctamente.{' '}
+              <Link to="/residentes/incidencias" className="reportar-incidencia-exito__enlace">
+                Ver mis reportes
+              </Link>
             </div>
           )}
 

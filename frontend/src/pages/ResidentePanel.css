@@ -39,3 +39,8 @@
 .residente-panel a:focus-visible, .residente-panel button:focus-visible { outline: 2px solid var(--terracotta-bright); outline-offset: 4px; }
 @media (max-width: 760px) { .residente-panel .rp-overview, .residente-panel .rp-notices { grid-template-columns: 1fr; } .residente-panel .rp-welcome { flex-direction: column; align-items: flex-start; } .residente-panel .residente-home-grid { grid-template-columns: 1fr; } .residente-panel .rp-panel { padding: 20px; } }
 @media (max-width: 420px) { .residente-panel .residente-home-contenido { padding: 24px 14px 40px; } .residente-panel .rp-reports li { flex-wrap: wrap; } }
+
+/* CU-15: aviso de reportes actualizados y enlaces del panel "Mis reportes" */
+.residente-panel .rp-aviso { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px 16px; margin-bottom: 20px; padding: 6px 20px; border: 1px solid rgba(224,141,91,.5); border-radius: 14px; background: rgba(201,122,74,.14); }
+.residente-panel .rp-aviso p { margin: 0; color: var(--crema); font-size: 14px; font-weight: 600; }
+.residente-panel .rp-links { display: flex; flex-wrap: wrap; gap: 0 20px; }

@@ -42,6 +42,8 @@ describe('CU-03 ReportarIncidenciaPage', () => {
     });
     expect(await screen.findByRole('status')).toHaveTextContent('Incidencia reportada correctamente.');
     expect(screen.getByLabelText(/Título/)).toHaveValue('');
+    // CU-15: después de enviar puede ir a ver el seguimiento de sus reportes
+    expect(screen.getByRole('link', { name: 'Ver mis reportes' })).toHaveAttribute('href', '/residentes/incidencias');
   });
 
   it('título y descripción son obligatorios', async () => {

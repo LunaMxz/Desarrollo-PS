@@ -1,14 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import apiClient, { obtenerMiEstadoCuenta } from '../api/client';
+import { listarMisIncidencias, obtenerMiEstadoCuenta } from '../api/client';
 import { listarComunicados } from '../api/comunicados.api';
 import { formatearFecha, formatearMonto } from '../utils/formatoEstadoCuenta';
-
-async function misReportes() {
-  const { data } = await apiClient.get('/incidencias/mias');
-  if (!Array.isArray(data?.incidencias)) throw new Error('Respuesta inválida');
-  return { success: true, incidencias: data.incidencias };
-}
+import { contarActualizadas, textoAvisoActualizadas } from '../utils/incidenciasRecientes';
 
 function useRecurso(cargar) {
   const [estado, setEstado] = useState({ cargando: true });
@@ -37,7 +32,7 @@ const estados = { abierto: 'Abierto', en_proceso: 'En proceso', resuelto: 'Resue
 
 export default function ResumenResidente() {
   const cuenta = useRecurso(obtenerMiEstadoCuenta);
-  const reportes = useRecurso(misReportes);
+  const reportes = useRecurso(listarMisIncidencias);
   const avisos = useRecurso(listarComunicados);
   const datos = cuenta.datos?.estadoCuenta;
   const incidencias = reportes.datos?.incidencias;
@@ -45,7 +40,13 @@ export default function ResumenResidente() {
     new Date(b.fecha_actualizacion || b.fecha_creacion) - new Date(a.fecha_actualizacion || a.fecha_creacion)).slice(0, 3);
   const publicaciones = [...(avisos.datos?.comunicados ?? [])].sort((a, b) => new Date(b.fecha_publicacion) - new Date(a.fecha_publicacion)).slice(0, 3);
 
+  const actualizadas = contarActualizadas(incidencias);
+
   return <>
+    {actualizadas > 0 && <div className="rp-aviso" role="status">
+      <p>{textoAvisoActualizadas(actualizadas)}</p>
+      <Link className="rp-link" to="/residentes/incidencias">Ver mis reportes →</Link>
+    </div>}
     <div className="rp-overview">
       <section className="rp-panel rp-account" aria-labelledby="rp-cuenta">
         <div className="rp-heading"><h2 id="rp-cuenta">Mi estado de cuenta</h2><span className="rp-tag">{datos?.unidad?.identificador || 'Mi unidad'}</span></div>
@@ -76,7 +77,10 @@ export default function ResumenResidente() {
             </li>)}
           </ul>}
         </>}
-        <Link className="rp-link" to="/incidencias/reportar">Crear un reporte →</Link>
+        <div className="rp-links">
+          <Link className="rp-link" to="/residentes/incidencias">Ver todos mis reportes →</Link>
+          <Link className="rp-link" to="/incidencias/reportar">Crear un reporte →</Link>
+        </div>
       </section>
     </div>
 

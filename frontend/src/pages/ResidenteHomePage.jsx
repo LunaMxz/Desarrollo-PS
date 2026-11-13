@@ -197,6 +197,15 @@ export default function ResidenteHomePage() {
           <button
             type="button"
             className="residente-home-tarjeta residente-home-tarjeta--activa"
+            onClick={() => navigate('/residentes/incidencias')}
+          >
+            <h3>Mis reportes</h3>
+            <p>Revisa en qué va cada incidencia, quién la atiende y cuándo se resolvió.</p>
+          </button>
+
+          <button
+            type="button"
+            className="residente-home-tarjeta residente-home-tarjeta--activa"
             onClick={() => navigate('/residentes/estado-cuenta')}
           >
             <h3>Mis cuotas</h3>

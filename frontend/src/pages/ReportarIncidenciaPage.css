@@ -250,6 +250,12 @@
   margin-bottom: 18px;
 }
 
+.reportar-incidencia-exito__enlace {
+  color: var(--terracotta-bright);
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
 /* ---------- Acciones ---------- */
 .reportar-incidencia-acciones {
   display: flex;

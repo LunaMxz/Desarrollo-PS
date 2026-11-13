@@ -214,6 +214,22 @@ export async function resolverIncidencia(id) {
   }
 }
 
+/* ---------- Mis incidencias del residente (CU-15) ---------- */
+// GET /incidencias/mias -> 200 { incidencias }, de la más reciente a la más antigua.
+// El residente sale de la sesión (JWT): no se manda ningún id.
+// Devuelve { success, incidencias, error }.
+export async function listarMisIncidencias() {
+  try {
+    const { data } = await apiClient.get('/incidencias/mias');
+    return { success: true, incidencias: Array.isArray(data?.incidencias) ? data.incidencias : [] };
+  } catch (err) {
+    return {
+      success: false,
+      error: mensajeDeError(err, { noAutorizado: 'No tienes permiso para consultar tus reportes.' }),
+    };
+  }
+}
+
 /* ---------- Cargos (CU-06) ---------- */
 // POST /cargos/generar -> 201 { message, periodo, cargos, omitidas }
 //200 si no hay unidades con residente activo (cargos = [])
